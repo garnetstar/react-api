@@ -45,4 +45,10 @@ class GymController
 		$this->database->query('INSERT INTO gym', ['type' => $data->type, 'date' => $data->date, 'value' => $data->value]);
 		return $response->withJson(['state' => 'ok']);
 	}
+	
+	public function delete(Request $request, Response $response, $args) {
+		$data = json_decode($request->getBody()->getContents());
+		$this->database->query('DELETE FROM `gym` WHERE gym_id = ?', $args['id']);
+		return $response->withJson(['state' => 'ok '. $args['id']]);
+	}
 }

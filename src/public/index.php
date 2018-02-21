@@ -56,6 +56,7 @@ $app->post('/article', ArticleController::class . ':post');
 
 $app->get('/gym[/{id}]', GymController::class . ':get');
 $app->post('/gym', GymController::class . ':post');
+$app->delete('/gym/{id}', GymController::class. ':delete');
 
 
 
