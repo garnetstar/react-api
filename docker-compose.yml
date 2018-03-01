@@ -5,7 +5,7 @@ services:
   volumes:
   - ./mysql:/var/lib/mysql
  slim:
-# image: limogin/php-7.1-apache
+# jako image se pouzije Dockerfile
   build:
    context: .
   container_name: slim-test
