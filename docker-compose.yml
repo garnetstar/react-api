@@ -1,46 +1,50 @@
-data_mysql:
- image: busybox
- volumes:
- - ./mysql:/var/lib/mysql
-slim:
- image: limogin/php-7.1-apache
- container_name: slim-test
- extra_hosts:
- - "docker.localhost:172.17.0.1"
- ports:
- - "8081:80"
- dns:
- - 10.12.3.250
- - 10.2.1.250
- - 10.13.6.250
- - 8.8.8.8
- volumes:
- - /home/machacej/test/slim/src:/var/www/html/
- - ./000-default.conf:/etc/apache2/sites-available/000-default.conf 
- links:
- - db:db
- env_file:
- - .env
-db:
- image: mysql:5.7
- container_name: slim-db
- expose:
- - "3306"
- ports:
- - "33062:3306"
- volumes_from:
- - data_mysql
- environment:
- - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
- - MYSQL_DATABASE=${DB_NAME}
-# - MYSQL_USER=${DB_USER}
-adminer:
- image: adminer
- container_name: slim-adminer
- ports:
- - "8080:8080"
- links:
- - db:db     
- environment:
- - ADMINER_DESIGN=nette
+version: "2"
+services:
+ data_mysql:
+  image: busybox
+  volumes:
+  - ./mysql:/var/lib/mysql
+ slim:
+# image: limogin/php-7.1-apache
+  build:
+   context: .
+  container_name: slim-test
+  extra_hosts:
+  - "docker.localhost:172.17.0.1"
+  ports:
+  - "8081:80"
+  dns:
+  - 10.12.3.250
+  - 10.2.1.250
+  - 10.13.6.250
+  - 8.8.8.8
+  volumes:
+  - /home/machacej/test/slim/src:/var/www/html/
+  - ./000-default.conf:/etc/apache2/sites-available/000-default.conf 
+  links:
+  - db:db
+  env_file:
+  - .env
+ db:
+  image: mysql:5.7
+  container_name: slim-db
+  expose:
+  - "3306"
+  ports:
+  - "33062:3306"
+  volumes_from:
+  - data_mysql
+  environment:
+  - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+  - MYSQL_DATABASE=${DB_NAME}
+#  - MYSQL_USER=${DB_USER}
+ adminer:
+  image: adminer
+  container_name: slim-adminer
+  ports:
+  - "8080:8080"
+  links:
+  - db:db     
+  environment:
+  - ADMINER_DESIGN=nette
 
