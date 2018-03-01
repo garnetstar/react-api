@@ -13,11 +13,11 @@ services:
   - "docker.localhost:172.17.0.1"
   ports:
   - "8081:80"
-  dns:
-  - 10.12.3.250
-  - 10.2.1.250
-  - 10.13.6.250
-  - 8.8.8.8
+#  dns:
+#  - 10.12.3.250
+#  - 10.2.1.250
+#  - 10.13.6.250
+#  - 8.8.8.8
   volumes:
   - /home/machacej/test/slim/src:/var/www/html/
   - ./000-default.conf:/etc/apache2/sites-available/000-default.conf 
