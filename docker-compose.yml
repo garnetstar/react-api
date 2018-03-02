@@ -8,7 +8,7 @@ services:
 # jako image se pouzije Dockerfile
   build:
    context: .
-  container_name: slim-test
+  container_name: slim-web
   extra_hosts:
   - "docker.localhost:172.17.0.1"
   ports:
@@ -25,6 +25,8 @@ services:
   - db:db
   env_file:
   - .env
+#  networks:
+#  - esnet
  db:
   image: mysql:5.7
   container_name: slim-db
@@ -48,3 +50,49 @@ services:
   environment:
   - ADMINER_DESIGN=nette
 
+ elasticsearch:
+  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+  container_name: elastic1
+  environment:
+  - cluster.name=docker-cluster
+  - bootstrap.memory_lock=true
+  - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  ulimits:
+   memlock:
+    soft: -1
+    hard: -1
+  volumes:
+  - /usr/share/elasticsearch/data:/home/machacej/test/elastic/data
+  ports:
+   - 9200:9200
+ elasticsearch2:
+  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+  container_name: elastic2
+  environment:
+  - cluster.name=docker-cluster
+  - bootstrap.memory_lock=true
+  - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  - "discovery.zen.ping.unicast.hosts=elasticsearch"
+  ulimits:
+   memlock:
+    soft: -1
+    hard: -1
+  volumes:
+  - /usr/share/elasticsearch/data:/home/machacej/test/elastic/data
+#    networks:
+#      - esnet
+#  networks:
+#  - esnet
+ cerebro:
+  build: 
+   context: .
+   dockerfile: Dockerfile-cerebro
+  container_name: cerebro
+  ports:
+  - "9000:9000"
+#  networks:
+#  - esnet
+  
+#networks:
+#  esnet:
+#    driver: bridge

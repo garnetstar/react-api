@@ -3,7 +3,8 @@
         "slim/slim": "^3.0",
 		"michelf/php-markdown": "1.7.0",
 		"nette/database" : "v2.4.4",
-		"symfony/console": "^v4.0.4"
+		"symfony/console": "^v4.0.4",
+		"elasticsearch/elasticsearch": "^v6.0.1"
     }, 
 	"autoload": { "psr-4": {"": "app/"} }
 }
