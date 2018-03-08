@@ -52,7 +52,7 @@ $app->get('/tag[/{id}]', TagController::class . ':get');
 
 $app->get('/article[/{id}]', ArticleController::class . ':get');
 
-$app->post('/article', ArticleController::class . ':post');
+$app->post('/article/{id}', ArticleController::class . ':post');
 
 $app->get('/gym[/{id}]', GymController::class . ':get');
 $app->post('/gym', GymController::class . ':post');

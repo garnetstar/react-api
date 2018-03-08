@@ -36,21 +36,10 @@ class ArticleController
 	public function post(Request $request, Response $response, $args)
 	{
 		$data = json_decode($request->getBody()->getContents());
-		$this->database->query('INSERT INTO article', ['title' => $data->title, 'content' => $data->content]);
-
-
+		$this->database->query('UPDATE article SET ? WHERE article_id = ?',
+			['title' => $data->title, 'content' => $data->content],
+			$args['id']
+			);
 		return $response->withJson(['state' => 'ok']);
-
-//		$response->setStatus(200);
-//        $response()->headers->set('Content-Type', 'application/json');
-//        echo json_encode(array("status" => "success", "code" => 1));
-//
-//		die();
-//		if (isset($args['id'])) {
-//		} else {
-//			die("ssss");
-////			$data = $this->database->query('SELECT * FROM tag')->fetchAll();
-////			return $response->withJson($data);
-//		}
 	}
 }
