@@ -50,9 +50,10 @@ $app->get('/', HomeController::class . ":home");
 $app->get('/tag[/{id}]', TagController::class . ':get');
 //$app->post('/user/{id}', UserController::class . ':update');
 
+$app->put('/article', ArticleController::class.':put');
 $app->get('/article[/{id}]', ArticleController::class . ':get');
-
 $app->post('/article/{id}', ArticleController::class . ':post');
+$app->delete('/article/{id}', ArticleController::class. ':delete');
 
 $app->get('/gym[/{id}]', GymController::class . ':get');
 $app->post('/gym', GymController::class . ':post');
