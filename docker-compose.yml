@@ -50,46 +50,46 @@ services:
   environment:
   - ADMINER_DESIGN=nette
 
- elasticsearch:
-  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
-  container_name: elastic1
-  environment:
-  - cluster.name=docker-cluster
-  - bootstrap.memory_lock=true
-  - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  ulimits:
-   memlock:
-    soft: -1
-    hard: -1
-  volumes:
-  - /usr/share/elasticsearch/data:/home/machacej/test/elastic/data
-  ports:
-   - 9200:9200
- elasticsearch2:
-  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
-  container_name: elastic2
-  environment:
-  - cluster.name=docker-cluster
-  - bootstrap.memory_lock=true
-  - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  - "discovery.zen.ping.unicast.hosts=elasticsearch"
-  ulimits:
-   memlock:
-    soft: -1
-    hard: -1
-  volumes:
-  - /usr/share/elasticsearch/data:/home/machacej/test/elastic/data
-#    networks:
-#      - esnet
-#  networks:
-#  - esnet
- cerebro:
-  build: 
-   context: .
-   dockerfile: Dockerfile-cerebro
-  container_name: cerebro
-  ports:
-  - "9000:9000"
+# elasticsearch:
+#  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+#  container_name: elastic1
+#  environment:
+#  - cluster.name=docker-cluster
+#  - bootstrap.memory_lock=true
+#  - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#  ulimits:
+#   memlock:
+#    soft: -1
+#    hard: -1
+#  volumes:
+#  - /usr/share/elasticsearch/data:/home/machacej/test/elastic/data
+#  ports:
+#   - 9200:9200
+# elasticsearch2:
+#  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+#  container_name: elastic2
+#  environment:
+#  - cluster.name=docker-cluster
+#  - bootstrap.memory_lock=true
+#  - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#  - "discovery.zen.ping.unicast.hosts=elasticsearch"
+#  ulimits:
+#   memlock:
+#    soft: -1
+#    hard: -1
+#  volumes:
+#  - /usr/share/elasticsearch/data:/home/machacej/test/elastic/data
+##    networks:
+##      - esnet
+##  networks:
+##  - esnet
+# cerebro:
+#  build: 
+#   context: .
+#   dockerfile: Dockerfile-cerebro
+#  container_name: cerebro
+#  ports:
+#  - "9000:9000"
 #  networks:
 #  - esnet
   
