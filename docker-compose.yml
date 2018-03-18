@@ -53,7 +53,7 @@ services:
   ports:
   - "80:80"
   volumes:
-  - ./react-default.conf:/etc/apache2/sites-available/000-default.conf 
+  - ./proxy-default.conf:/etc/apache2/sites-available/000-default.conf 
 
  react:
 # jako image se pouzije Dockerfile
