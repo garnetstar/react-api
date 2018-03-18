@@ -44,6 +44,18 @@ services:
   - db:db     
   environment:
   - ADMINER_DESIGN=nette
+ proxy:
+# jako image se pouzije Dockerfile
+  build:
+   context: .
+   dockerfile: Dockerfile-proxy
+  container_name: proxy
+#  extra_hosts:
+#  - "docker.localhost:172.17.0.1"
+  ports:
+  - "80:80"
+  volumes:
+  - ./react-default.conf:/etc/apache2/sites-available/000-default.conf 
 
 # elasticsearch:
 #  image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
