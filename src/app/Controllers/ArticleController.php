@@ -26,10 +26,10 @@ class ArticleController
 	public function get(Request $request, Response $response, $args)
 	{
 		if (isset($args['id'])) {
-			$data = $this->database->query('SELECT * FROM article WHERE isnull(deleted) AND article_id=? ORDER BY last_update DESC', $args['id'])->fetch();
+			$data = $this->database->query('SELECT * FROM article WHERE isnull(deleted) AND article_id=?', $args['id'])->fetch();
 			return $response->withJson($data);
 		} else {
-			$data = $this->database->query('SELECT article_id, title FROM article WHERE isnull(deleted) ')->fetchAll();
+			$data = $this->database->query('SELECT article_id, title FROM article WHERE isnull(deleted)  ORDER BY last_update DESC')->fetchAll();
 			return $response->withJson($data);
 		}
 	}
