@@ -35,7 +35,7 @@ class ArticleController
 	
 	public function put(Request $request, Response $response, $args) {
 		$data = json_decode($request->getBody()->getContents());
-			$this->database->query('INSERT INTO article', ['title' => $data->title, 'content'=> '']);
+			$this->database->query('INSERT INTO article', ['title' => $data->title, 'content'=> '', 'last_update' => 'NOW()']);
 			$articleId = $this->database->getInsertId();
 		return $response->withJson(['state' => 'ok', 'article_id' => $articleId]);
 	}
@@ -44,14 +44,14 @@ class ArticleController
 	{
 		$data = json_decode($request->getBody()->getContents());
 		$this->database->query('UPDATE article SET ? WHERE article_id = ?',
-			['title' => $data->title, 'content' => $data->content],
+			['title' => $data->title, 'content' => $data->content, 'last_update' => 'NOW()'],
 			$args['id']
 			);
 		return $response->withJson(['state' => 'ok']);
 	}
 	
 	public function delete(Request $request, Response $response, $args) {
-		$this->database->query('UPDATE article SET deleted=NOW() WHERE article_id=?', $args['id']);
+		$this->database->query('UPDATE article SET deleted=NOW(), last_update = NOW() WHERE article_id=?', $args['id']);
 		return $response->withJson(['state' => 'ok']);
 	}
 }
