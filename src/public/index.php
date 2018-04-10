@@ -24,6 +24,21 @@ $container['database'] = function($c) {
 	return $database;
 };
 
+//cache
+$container['storage'] = function($c) {
+    $storage = new Nette\Caching\Storages\FileStorage('temp');
+    return $storage;
+};
+
+//database context
+$container['database-context'] = function($c){
+    $storage = new Nette\Caching\Storages\FileStorage('../temp');
+    $databaseCache = new \Nette\Caching\Cache($storage);
+    $structure = new \Nette\Database\Structure($c->get('database'), $storage);
+    $context = new \Nette\Database\Context($c->database,$structure);
+    return $context;
+};
+
 $container[HomeController::class] = function($c) {
 	return new HomeController($c->get('database'), $c['environment']);
 };
@@ -33,7 +48,7 @@ $container[TagController::class] = function($c) {
 };
 
 $container[ArticleController::class] = function($c) {
-	return new ArticleController($c->get('database'));
+	return new ArticleController($c->get('database'), $c->get('database-context'));
 };
 
 $container[GymController::class] = function($c) {
@@ -52,6 +67,7 @@ $app->get('/tag[/{id}]', TagController::class . ':get');
 
 $app->put('/article', ArticleController::class.':put');
 $app->get('/article[/{id}]', ArticleController::class . ':get');
+$app->get('/article/filter/{field}/{word}', ArticleController::class.':filter');
 $app->post('/article/{id}', ArticleController::class . ':post');
 $app->delete('/article/{id}', ArticleController::class. ':delete');
 
