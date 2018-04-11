@@ -1,3 +1,4 @@
 src/vendor/*
 nbproject/*
 mysql/*
+.idea/*
