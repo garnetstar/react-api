@@ -27,7 +27,7 @@ class GymController
 			$order = 'asc';
 		}
 		
-		$columns = 'gym_id, type, value, unix_timestamp(date) * 1000 as timestamp';
+		$columns = 'gym_id, type, value, unix_timestamp(date) as timestamp';
 
 		if (array_key_exists('type', $params)) {
 			$sql = 'SELECT '.$columns.' FROM gym WHERE type = ' . (int) $params['type'] . ' ORDER BY `date` ' . $order;
