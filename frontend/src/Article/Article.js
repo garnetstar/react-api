@@ -30,8 +30,6 @@ class Article extends Component {
 	}
 
 	componentDidMount() {
-		console.log(window.innerWidth);
-		console.log(window.innerHeight);
 		this.reloadList();
 	}
 

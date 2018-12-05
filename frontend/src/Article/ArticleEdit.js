@@ -13,6 +13,8 @@ class ArticleEdit extends Component {
             content: this.props.content,
             ajaxHelper: AjaxHelperClass,
             justSaved: false,
+            width: 0,
+            height: 0
         };
 
         this.leftScroll = React.createRef();
@@ -22,9 +24,11 @@ class ArticleEdit extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleTitle = this.handleTitle.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
+        this.updateDimensions = this.updateDimensions.bind(this);
     }
 
     componentDidMount() {
+        this.updateDimensions();
         fetch('/api/article/' + this.state.articleId)
             .then(res => res.json())
             .then((result) => {
@@ -40,7 +44,6 @@ class ArticleEdit extends Component {
                     });
                 }
             );
-
     }
 
     handleSubmit(e) {
@@ -48,8 +51,6 @@ class ArticleEdit extends Component {
         const callback = function (res) {
             this.setState({justSaved: true});
         }.bind(this);
-        console.log(this.state.content);
-        console.log(this.state.article.content);
         this.state.ajaxHelper.articleSave(this.state.articleId, this.state.article.title, this.state.article.content, callback);
 
     }
@@ -63,9 +64,7 @@ class ArticleEdit extends Component {
     }
 
     handleScroll(e) {
-        // console.log(this.leftScroll.current.scrollTop);
         this.markDownScroll.current.scrollTop = this.leftScroll.current.scrollTop;
-
     }
 
     handleTitle(e) {
@@ -76,7 +75,18 @@ class ArticleEdit extends Component {
         });
     }
 
+    updateDimensions() {
+        this.setState(
+            {
+                width: window.innerWidth,
+                height: window.innerHeight
+            }
+        );
+        ;
+    }
+
     render() {
+        let heightTextarea = {'height': (this.state.height - 180) + 'px'};
         if (this.state.justSaved === true) {
             const url = '/article/' + this.state.articleId;
             return (<Redirect to={url}/>);
@@ -88,7 +98,8 @@ class ArticleEdit extends Component {
                     <div className='row'>
                         <div className='col-sm-12'>
                             <div className='form-group'>
-                                <input type='text' onChange={this.handleTitle} value={this.state.article.title}/>
+                                <input className='form-control' type='text' onChange={this.handleTitle}
+                                       value={this.state.article.title}/>
                             </div>
                         </div>
                     </div>
@@ -96,6 +107,7 @@ class ArticleEdit extends Component {
                         <div className='col-sm-6'>
                             <div className="form-group">
 								<textarea
+                                    style={heightTextarea}
                                     ref={this.leftScroll}
                                     className='form-control'
                                     onChange={this.handleContent}
@@ -109,11 +121,14 @@ class ArticleEdit extends Component {
                             </div>
                         </div>
                         <div className='col-sm-6'>
-                            <div className='border markdownScroll' ref={this.markDownScroll} >
+                            <div
+                                className='border markdownScroll'
+                                ref={this.markDownScroll}
+                                style={heightTextarea}
+                            >
                                 <MarkdownRenderer markdown={this.state.article.content}/>
                             </div>
                         </div>
-
                     </div>
                 </form>
             );
