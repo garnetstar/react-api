@@ -87,7 +87,7 @@ class Article extends Component {
 		// e.preventDefault();
 		var word = e.target.value;
 		var url;
-		if(word === '') {
+		if (word === '') {
 			url = '/api/article';
 		} else {
 			url = '/api/article/filter/title/' + word;
@@ -156,7 +156,7 @@ class Article extends Component {
 	renderDetail() {
 
 
-		return(
+		return (
 			<div>
 				<ArticleDetail articleId={this.state.articleId}/>
 			</div>);
