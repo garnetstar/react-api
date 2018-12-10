@@ -2,3 +2,7 @@ src/vendor/*
 nbproject/*
 mysql/*
 .idea/*
+
+frontend/node_modules/*
+react/build/index.html
+react/build/index_bundle.js
