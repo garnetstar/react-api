@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Article from './Article/Article';
 import ArticleEdit from './Article/ArticleEdit';
 import Personal from './Personal/Personal';
+import Login from './Login';
 import Gym from './Gym';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import GoogleLogin from 'react-google-login';
 
 import RouteNavItem from "./RouteNavItem";
 
@@ -16,40 +18,55 @@ class MyApp extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			context: 'article'
+			context: 'article',
+			accessToken: null
 		};
+
+		this.addAccessToken = this.addAccessToken.bind(this);
+	}
+
+	addAccessToken(accessToken) {
+		this.setState({accessToken: accessToken});
 	}
 
 	render() {
-		return(
-	<BrowserRouter>
-		<div className='container-fluid'>
-			<div className='row'>
-				<div className='col-sm-12'>
-					<ul className='nav nav-tabs' >
-						<li className='nav-item'>
-							<RouteNavItem  href="/article" title='Article'>Article</RouteNavItem>
-						</li>
-						<li className='nav-item'>
-							<RouteNavItem  href="/personal" title="Personal">Personal</RouteNavItem>
-						</li>
-						<li className='nav-item'>
-							<RouteNavItem href="/gym" title="Gym">Gym</RouteNavItem>
-						</li>
-					</ul>
-				</div>
-			</div>
 
-				<Switch>
-				 {/* <Route path='/article/:number' render={(props) => (<ArticleDetail articleId={props.match.params.number} />)}/> */}
-				 <Route path='/article/edit/:id' render={(props) => (<ArticleEdit articleId={props.match.params.id} />)} />
-				 <Route path='/article/:number' render={(props) => (<Article articleId={props.match.params.number} />)}/>
-					<Route path='/article' component={Article}/>
-					<Route path='/gym' component={Gym}/>
-				  <Route path='/personal' component={Personal}/>
-				</Switch>
-		</div>
- </BrowserRouter>
+		return (
+			<BrowserRouter>
+				<div className='container-fluid'>
+					<div className='row'>
+						<div className='col-sm-10'>
+							<ul className='nav nav-tabs'>
+								<li className='nav-item'>
+									<RouteNavItem href="/article" title='Article'>Article</RouteNavItem>
+								</li>
+								<li className='nav-item'>
+									<RouteNavItem href="/personal" title="Personal">Personal</RouteNavItem>
+								</li>
+								<li className='nav-item'>
+									<RouteNavItem href="/gym" title="Gym">Gym</RouteNavItem>
+								</li>
+							</ul>
+						</div>
+						<div className='col-sm-2'>
+							<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken} />
+						</div>
+					</div>
+
+					<Switch>
+						{/* <Route path='/article/:number' render={(props) => (<ArticleDetail articleId={props.match.params.number} />)}/> */}
+						<Route path='/article/edit/:id'
+							   render={(props) => (<ArticleEdit articleId={props.match.params.id}/>)}/>
+						<Route path='/article/:number'
+							   render={(props) => (<Article articleId={props.match.params.number} />)}/>
+						<Route path='/article' component={Article}/>
+						<Route path='/gym' component={Gym}/>
+						<Route path='/personal'
+							   render={(props) => (<Personal accessToken={this.state.accessToken} />)}
+						/>
+					</Switch>
+				</div>
+			</BrowserRouter>
 		);
 	}
 }
