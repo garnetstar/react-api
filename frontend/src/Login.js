@@ -1,19 +1,20 @@
 import React, {Component} from 'react';
 import GoogleLogin from 'react-google-login';
-import { GoogleLogout } from 'react-google-login';
+import LoginInfo from './LoginInfo.js';
 
 class Login extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-		};
+		this.state = {};
 		this.login = this.login.bind(this);
+		this.logout = this.logout.bind(this);
 	}
 
 	login(response) {
 		this.props.addAccessToken(response);
 	}
-	logout(response) {
+
+	logout() {
 		this.props.addAccessToken(null);
 	}
 
@@ -27,18 +28,14 @@ class Login extends Component {
 			onSuccess={this.login}
 			onFailure={responseGoogle}
 		/>;
-		const logoutButton = <GoogleLogout
-			buttonText="Logout"
-			onLogoutSuccess={responseGoogle}
-		>
-		</GoogleLogout>;
 
 		var show = null;
 
-		if(this.props.accessToken === null) {
+		if (this.props.accessToken === null) {
 			show = loginButton;
 		} else {
-			show = logoutButton;
+			console.log(this.state.accessToken);
+			show = <LoginInfo googleResponse={this.props.accessToken} logout={this.logout}/>;
 		}
 		return (
 			<div>
