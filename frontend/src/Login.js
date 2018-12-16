@@ -23,7 +23,7 @@ class Login extends Component {
 			console.log(response);
 		};
 		const loginButton = < GoogleLogin
-			clientId="192740429578-s8t31esln4b8ab64os5afg11imb93l35.apps.googleusercontent.com"
+			clientId={process.env.GOOGLE_CLIENT_ID}
 			buttonText="Login"
 			onSuccess={this.login}
 			onFailure={responseGoogle}
