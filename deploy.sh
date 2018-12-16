@@ -6,7 +6,9 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-ssh idaho "cd /app/react-api/ && git fetch origin && git checkout master && git checkout --force --detach master"
+BRANCH=$1
+
+ssh idaho "cd /app/react-api/ && git fetch origin && git checkout ${BRANCH} && git checkout --force --detach ${BRANCH}"
 
 cd ./frontend/
 npm run build
