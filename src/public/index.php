@@ -48,11 +48,15 @@ $container[TagController::class] = function($c) {
 };
 
 $container[ArticleController::class] = function($c) {
-	return new ArticleController($c->get('database'), $c->get('database-context'));
+	return new ArticleController($c->get('database'), $c->get('database-context'), $c->get(\Model\Authenticator::class));
 };
 
 $container[GymController::class] = function($c) {
 	return new GymController($c->get('database'));
+};
+
+$container[\Model\Authenticator::class] = function ($c) {
+	return new \Model\Authenticator();
 };
 
 $app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
