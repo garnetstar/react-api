@@ -52,6 +52,10 @@ class ArticleController extends SecureController
 
 	public function put(Request $request, Response $response, $args)
 	{
+		if (!$this->hasAccessToken($request)) {
+			return $this->getUnauthorizedResponse($response, 'Missing access_token');
+		}
+
 		$data = json_decode($request->getBody()->getContents());
 		$this->database->query('INSERT INTO article', ['title' => $data->title, 'content' => '', 'last_update' => new DateTime]);
 		$articleId = $this->database->getInsertId();
@@ -60,6 +64,10 @@ class ArticleController extends SecureController
 
 	public function post(Request $request, Response $response, $args)
 	{
+		if (!$this->hasAccessToken($request)) {
+			return $this->getUnauthorizedResponse($response, 'Missing access_token');
+		}
+
 		$data = json_decode($request->getBody()->getContents());
 		$this->database->query('UPDATE article SET ? WHERE article_id = ?',
 			['title' => $data->title, 'content' => $data->content, 'last_update' => new DateTime()],
@@ -70,6 +78,10 @@ class ArticleController extends SecureController
 
 	public function delete(Request $request, Response $response, $args)
 	{
+		if (!$this->hasAccessToken($request)) {
+			return $this->getUnauthorizedResponse($response, 'Missing access_token');
+		}
+
 		$this->database->query('UPDATE article SET deleted=NOW() WHERE article_id=?', $args['id']);
 		return $response->withJson(['state' => 'ok']);
 	}
