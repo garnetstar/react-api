@@ -44,8 +44,7 @@ $container[\Controllers\TagController::class] = function (Container $container) 
 $container[ArticleController::class] = function (Container $container) {
 	return new ArticleController(
 		$container->get('database'),
-		$container->get('database-context'),
-		$container->get(\Model\Authenticator::class)
+		$container->get('database-context')
 	);
 };
 
@@ -53,6 +52,14 @@ $container[GymController::class] = function ($c) {
 	return new GymController($c->get('database'));
 };
 
-$container[\Model\Authenticator::class] = function ($c) {
-	return new \Model\Authenticator();
+$container[\Controllers\LoginController::class] = function (Container $container) {
+	$clientId = $container['settings']['googleClientId'];
+	return new \Controllers\LoginController(
+		$clientId,
+		$container[\Model\UserRepository::class]
+	);
+};
+
+$container[\Model\UserRepository::class] = function (Container $container) {
+	return new \Model\UserRepository($container['database']);
 };

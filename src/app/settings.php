@@ -9,5 +9,5 @@ return [
 		'user' => 'root',
 		'password' => getenv('DB_PASSWORD'),
 	],
+	'googleClientId' => getenv('GOOGLE_CLIENT_ID'),
 ];
-//$config['database'] = $database;];

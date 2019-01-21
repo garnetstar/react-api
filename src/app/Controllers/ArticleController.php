@@ -2,7 +2,6 @@
 
 namespace Controllers;
 
-use Model\Authenticator;
 use Nette\Database\Connection;
 use Nette\Database\Context;
 use Nette\Utils\DateTime;
@@ -14,7 +13,7 @@ use Slim\Http\Response;
  *
  * @author machacej
  */
-class ArticleController extends SecureController
+class ArticleController
 {
 
 	/** @var Connection */
@@ -23,24 +22,14 @@ class ArticleController extends SecureController
 	/** @var Context */
 	private $context;
 
-	/**
-	 * @var Authenticator
-	 */
-	private $authenticator;
-
-	public function __construct(Connection $database, Context $context, Authenticator $authenticator)
+	public function __construct(Connection $database, Context $context)
 	{
 		$this->database = $database;
 		$this->context = $context;
-		$this->authenticator = $authenticator;
 	}
 
 	public function get(Request $request, Response $response, $args)
 	{
-		if (!$this->hasAccessToken($request)) {
-			return $this->getUnauthorizedResponse($response, 'Missing access_token');
-		}
-
 		if (isset($args['id'])) {
 			$data = $this->database->query('SELECT * FROM article WHERE isnull(deleted) AND article_id=?', $args['id'])->fetch();
 			return $response->withJson($data);
@@ -64,10 +53,6 @@ class ArticleController extends SecureController
 
 	public function post(Request $request, Response $response, $args)
 	{
-		if (!$this->hasAccessToken($request)) {
-			return $this->getUnauthorizedResponse($response, 'Missing access_token');
-		}
-
 		$data = json_decode($request->getBody()->getContents());
 		$this->database->query('UPDATE article SET ? WHERE article_id = ?',
 			['title' => $data->title, 'content' => $data->content, 'last_update' => new DateTime()],
