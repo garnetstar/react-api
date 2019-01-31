@@ -39,4 +39,11 @@ class UserRepository
 
 		return null;
 	}
+
+	public function findUserByToken(string $token): ?\stdClass
+	{
+		$result = $this->database->query('SELECT * FROM `user` WHERE token=?', $token);
+
+		return $result->fetchAll()[0] ?? null;
+	}
 }

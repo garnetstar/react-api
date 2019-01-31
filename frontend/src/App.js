@@ -1,117 +1,85 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, {Component} from 'react';
+import Article from './Article/Article';
+import ArticleEdit from './Article/ArticleEdit';
+import Personal from './Personal/Personal';
+import Login from './Login';
+import Gym from './Gym';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import RouteNavItem from "./RouteNavItem";
+import {HttpClient} from "./HttpClient";
+import LoginInfo from './LoginInfo.js';
 
 
 class App extends Component {
-
 	constructor(props) {
 		super(props);
 		this.state = {
-			menu: getJson(),
-			isLoades: false
-
-		}
+			context: 'article',
+			accessToken: null,
+			userImage: null,
+			loading: null
+		};
+		this.addAccessToken = this.addAccessToken.bind(this);
 	}
 
-	componentDidMount() {
-		fetch('/tag')
-		.then(res=>res.json())
-		.then((result)=>{
-			this.setState({
-				tags:result,
-				isLoades:true,
-			})
-		});
+	addAccessToken(accessToken, imageUrl) {
+		this.setState({accessToken: accessToken, userImage: imageUrl});
 	}
 
-	renderLi(cont) {
-		return (
-			<MenuElement value={cont} />
+	render() {
+		const accessToken = this.state.accessToken === null ? null : this.state.accessToken;
+		if (accessToken === null) {
+			return (
+				<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken}/>
 			);
-		}
-
-	handleClick(i, e) {
-
-		e.preventDefault();
-		const menu = this.state.menu.slice();
-
-		var color = this.state.menu[i].color;
-		if (color === 'red') {
-			menu[i].color = 'blue';
 		} else {
-			menu[i].color = 'red';
-		}
-		this.setState({
-			menu: menu
-		});
-		console.log(this.state.menu);
-	}
-
-		render() {
-
-			var indents = [];
-			for (let i = 0; i < this.state.menu.length; i++) {
-				indents.push(
-					<MenuElement
-
-						color={this.state.menu[i].color}
-						key={i}
-						value={this.state.menu[i].cont}
-						onClick={(e) => this.handleClick(i,e)}
-						>
-
-					</MenuElement>
-				);
-			}
-			const isLoades = this.state.isLoades;
-
-			console.log(this.state.isLoades);
-			const tags = this.state.tags;
-
-			if(isLoades) {
-				return (
-					<ul>
-						{indents}
-						{tags.map(one=>(
-							<div key={one.tag_id}>
-							<div  key={one.tag_id}>{one.name}</div>
+			const client = new HttpClient(this.state.accessToken)
+			console.log(client)
+			return (
+				<BrowserRouter>
+					<div className='container-fluid'>
+						<div className='row'>
+							<div className='col-sm-10'>
+								<ul className='nav nav-tabs'>
+									<li className='nav-item'>
+										<RouteNavItem href="/article" title='Article'>Article</RouteNavItem>
+									</li>
+									<li className='nav-item'>
+										<RouteNavItem href="/personal" title="Personal">Personal</RouteNavItem>
+									</li>
+									<li className='nav-item'>
+										<RouteNavItem href="/gym" title="Gym">Gym</RouteNavItem>
+									</li>
+								</ul>
 							</div>
-													)
-												)
-											}
-	  			</ul>
-				);
-			} else {
-				return (
-					<div>Loading...</div>
-				);
-			}
-			// console.log(tags);
+							<div className='col-sm-2'>
+								<LoginInfo addAccessToken={this.addAccessToken} image={this.state.userImage}/>
+							</div>
+						</div>
 
+						<Switch>
+							<Route path='/article/edit/:id'
+								   render={(props) => (
+									   <ArticleEdit articleId={props.match.params.id} client={client}/>)}/>
+							<Route path='/article/:number'
+								   render={(props) => (
+									   <Article articleId={props.match.params.number} client={client}/>)}/>
+							<Route path='/article'
+								   render={(props) => (<Article client={client}/>)}
+							/>
+							<Route path='/gym' component={Gym}/>
+							<Route path='/personal'
+								   render={(props) => (<Personal accessToken={this.state.accessToken}/>)}
+							/>
+							<Route path='/login' render={(props) => (
+								<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken}/>)}/>
+						</Switch>
+					</div>
+				</BrowserRouter>
+			)
 		}
+		;
 	}
-
-
-function MenuElement(props) {
-	const color = props.color;
-	return (
-
-		<li>
-			<a
-				style={{color: props.color}}
-				onClick={props.onClick}
-				href="#"
-				>
-				{props.value}
-			</a>
-		</li>
-	);
-}
-
-
-function getJson() {
-	const json = '[{"cont":"one","color":"red"},{"cont":"two","color":"red"},{"cont":"three","color":"blue"}]';
-	return JSON.parse(json);
 }
 
 export default App;

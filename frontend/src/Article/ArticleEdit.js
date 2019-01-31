@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import MarkdownRenderer from 'react-markdown-renderer';
 import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
+import axios from 'axios';
 
 class ArticleEdit extends Component {
 	constructor(props) {
@@ -19,6 +20,7 @@ class ArticleEdit extends Component {
 
 		this.leftScroll = React.createRef();
 		this.markDownScroll = React.createRef();
+		this.client = this.props.client;
 
 		this.handleContent = this.handleContent.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,30 +31,43 @@ class ArticleEdit extends Component {
 
 	componentDidMount() {
 		this.updateDimensions();
-		fetch('/api/article/' + this.state.articleId)
-			.then(res => res.json())
-			.then((result) => {
-					this.setState({
-						article: result,
-						isLoaded: true,
-					})
-				},
-				(error) => {
-					this.setState({
-						isLoaded: true,
-						error
-					});
-				}
-			);
+		this.client.get(
+			'/api/article/' + this.state.articleId,
+			(result) => {
+				console.log(result.data);
+				this.setState({
+						article: result.data,
+						isLoaded: true
+					}
+				)
+			},
+			(error) => {
+				console.log(['error', error]);
+				this.setState({
+					isLoaded: true,
+				})
+			}
+		);
+
 	}
 
 	handleSubmit(e) {
 		e.preventDefault();
-		const callback = function (res) {
-			this.setState({justSaved: true});
-		}.bind(this);
-		this.state.ajaxHelper.articleSave(this.state.articleId, this.state.article.title, this.state.article.content, callback);
-
+		let url = '/api/article/' + this.state.articleId;
+		let params = {
+			title: this.state.article.title,
+			content: this.state.article.content
+		};
+		this.client.post(
+			url,
+			params,
+			(result) => {
+				this.setState({justSaved: true})
+			},
+			(error) => {
+				console.log(['error', error]);
+			}
+		);
 	}
 
 	handleContent(e) {

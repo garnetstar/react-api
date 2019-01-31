@@ -24,6 +24,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0-alpha.6",
+    "dotenv": "^6.2.0",
     "react": "^16.6.1",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.6.1",

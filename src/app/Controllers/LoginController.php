@@ -36,7 +36,6 @@ class LoginController
 			$payload = $client->verifyIdToken($data->id_token);
 
 			if ($user = $this->getUser($payload)) {
-
 				$response = $response->withJson(
 					[
 						'token' => $user['token'],

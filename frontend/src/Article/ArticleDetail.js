@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import MarkdownRenderer from 'react-markdown-renderer';
 import RouteNavItem from "../RouteNavItem";
 import AjaxHelperClass from "../ajaxHelper";
-import { Redirect } from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
+import axios from 'axios';
+import HttpClient from "../HttpClient.js";
 
 class ArticleDetail extends Component {
 	constructor(props) {
@@ -12,67 +14,55 @@ class ArticleDetail extends Component {
 			article: null,
 			isLoaded: false,
 			ajaxHelper: AjaxHelperClass,
-			redirectToArticle: null,
+			redirectToArticle: null
 		};
+		this.client = this.props.client;
 		this.handleDelete = this.handleDelete.bind(this);
 	}
 
 	componentDidMount() {
-		fetch('/api/article/' + this.state.articleId)
-			.then(res => res.json())
-			.then((result) => {
-					this.setState({
-						article: result,
-						isLoaded: true,
-					})
-				},
-				(error) => {
-					this.setState({
-						isLoaded: true,
-						error
-					});
-				}
-			);
+		this.setArticleDetail(this.state.articleId);
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.articleId !== this.props.articleId) {
-			fetch('/api/article/' + nextProps.articleId)
-				.then(res => res.json())
-				.then((result) => {
-						this.setState({
-							article: result,
-							isLoaded: true,
-						})
-					},
-					(error) => {
-						this.setState({
-							isLoaded: true,
-							error
-						});
-					}
-				);
+		if (nextProps.articleId !== this.props.articleId) {
+			this.setArticleDetail(nextProps.articleId);
 		}
 	}
 
 	handleDelete(e) {
 
-		if(window.confirm('really delete ?')) {
-			const callback = function(res) {
-				this.setState({redirectToArticle: '/article'});
-			}.bind(this);
-			this.state.ajaxHelper.articleDelete(this.state.article.article_id, callback);
+		if (window.confirm('really delete ?')) {
+			let url = '/api/article/' + this.state.article.article_id;
+
+			this.client.delete(
+				url,
+				(res) => {
+					console.log('redirect');
+					this.props.reloadArticles();
+					this.setState({redirectToArticle: '/article'});
+				},
+				(error) => {
+					alert('error in handleDelete' + error)
+				}
+			);
+			// .then(res => {
+			// 	this.props.reloadArticles();
+			// 	console.log('redirect');
+			// 	this.setState({redirectToArticle: '/article'});
+			// })
+			// .catch(error => alert('error in handleDelete' + error));
 		}
 	}
 
 	render() {
-		if(this.state.redirectToArticle !== null) {
+		if (this.state.redirectToArticle !== null) {
 			const url = this.state.redirectToArticle;
-			return(<Redirect to={url} />);
+			return (<Redirect to={url}/>);
 		}
-		else if(this.state.isLoaded) {
+		else if (this.state.isLoaded) {
 			const url = '/article/edit/' + this.state.article.article_id;
-			return(
+			return (
 				<div>
 					<ul className='nav justify-content-end'>
 						<li className='nav-item'>
@@ -83,19 +73,34 @@ class ArticleDetail extends Component {
 						</li>
 					</ul>
 
-        <b>{this.state.article.title}</b>
-				{this.state.article.content && (
-						<MarkdownRenderer markdown={this.state.article.content} />
-				)}
-
-
-      </div>
-
+					<b>{this.state.article.title}</b>
+					{this.state.article.content && (
+						<MarkdownRenderer markdown={this.state.article.content}/>
+					)}
+				</div>
 			);
 		} else {
-			return(<div>Loading...</div>);
+			return (<div>Loading...</div>);
 		}
 	}
 
+	setArticleDetail(articleId) {
+		this.client.get(
+			'/api/article/' + articleId,
+			(result) => {
+				this.setState({
+					article: result.data,
+					isLoaded: true,
+				})
+			},
+			(error) => {
+				this.setState({
+					isLoaded: true,
+					'error': error.toString()
+				});
+			}
+		);
+	}
 }
+
 export default ArticleDetail;

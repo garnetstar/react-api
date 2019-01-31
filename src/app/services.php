@@ -63,3 +63,8 @@ $container[\Controllers\LoginController::class] = function (Container $container
 $container[\Model\UserRepository::class] = function (Container $container) {
 	return new \Model\UserRepository($container['database']);
 };
+
+$container[\Middleware\Auth::class] = function (Container $container) {
+	$userRepository = $container[\Model\UserRepository::class];
+	return new \Middleware\Auth($userRepository);
+};

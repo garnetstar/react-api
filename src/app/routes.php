@@ -7,21 +7,23 @@ use Controllers\LoginController;
 /**
  * Article
  */
-$app->get('/article[/{id}]', ArticleController::class . ':get')
+$app->group('', function (\Slim\App $app) {
+	$app->get('/article[/{id}]', ArticleController::class . ':get')
 	->add(\Middleware\Auth::class);
 
-$app->get('/article/filter/{field}/{word}', ArticleController::class . ':filter');
-$app->put('/article', ArticleController::class . ':put');
-$app->post('/article/{id}', ArticleController::class . ':post');
-$app->delete('/article/{id}', ArticleController::class . ':delete');
-
+	$app->get('/article/filter/{field}/{word}', ArticleController::class . ':filter');
+	$app->put('/article', ArticleController::class . ':put');
+	$app->post('/article/{id}', ArticleController::class . ':post');
+	$app->delete('/article/{id}', ArticleController::class . ':delete');
+})->add(\Middleware\Auth::class);
 /**
  * Gym
  */
-$app->get('/gym[/{id}]', \Controllers\GymController::class . ':get');
-$app->post('/gym', GymController::class . ':post');
-$app->delete('/gym/{id}', GymController::class . ':delete');
-
+$app->group('', function (\Slim\App $app) {
+	$app->get('/gym[/{id}]', \Controllers\GymController::class . ':get');
+	$app->post('/gym', GymController::class . ':post');
+	$app->delete('/gym/{id}', GymController::class . ':delete');
+})->add(\Middleware\Auth::class);
 /**
  * Tag
  */
