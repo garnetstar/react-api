@@ -175,7 +175,6 @@ class Article extends Component {
 		const articleIdConst = parseInt(this.state.articleId, 10);
 		return (
 			<div onKeyPress={this.handleGlobalPress}>
-				<br/>
 				<div className='row'>
 					<div className='col-sm-3'>
 

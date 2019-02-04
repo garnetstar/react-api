@@ -11,7 +11,7 @@ module.exports = (env) => {
 	const basePath = currentPath + '/.env';
 	const envPath = basePath + '.' + env.ENVIRONMENT;
 	const finalPath = fs.existsSync(envPath) ? envPath : basePath;
-	const fileEnv = dotenv.config({ path: finalPath }).parsed;
+	const fileEnv = dotenv.config({path: finalPath}).parsed;
 
 	const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
 		prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
@@ -37,6 +37,10 @@ module.exports = (env) => {
 				{
 					test: /\.css$/,
 					use: ["style-loader", "css-loader"]
+				},
+				{
+					test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
+					loader: 'url-loader?limit=100000'
 				}
 			]
 		},

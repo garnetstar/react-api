@@ -1,4 +1,25 @@
+import axios from 'axios';
+
 class AjaxHelperClass {
+
+
+	// let header = {
+	// 	headers: {'Authorization': "Bearer " + accessToken}
+	// };
+
+	get(url, accessToken, callback, errorCallback) {
+		const header = {
+			headers: {'Authorization': "Bearer " + accessToken}
+		};
+
+			axios.get(url, header)
+				.then((result) => callback(result))
+				.catch((result) => errorCallback(result));
+	}
+
+	delete(url, accessToken, callback, errorCallback) {
+
+	}
 
 	gymList(callback, typeId) {
 		fetch('/api/gym?type=1&order=desc&type=' + typeId)
@@ -28,33 +49,33 @@ class AjaxHelperClass {
 		.catch(res=>{console.log(res);});
 	}
 
-	articleSave(articleId,title, content, callback) {
-		const body = JSON.stringify({
-			title: title,
-			content: content,
-		});
-		fetch('/api/article/' + articleId, {
-			method: 'POST',
-			body: body,
-		}).then(res=>{callback(res)})
-		.catch(res=>{console.log(res);});
-	}
+	// articleSave(articleId,title, content, callback) {
+	// 	const body = JSON.stringify({
+	// 		title: title,
+	// 		content: content,
+	// 	});
+	// 	fetch('/api/article/' + articleId, {
+	// 		method: 'POST',
+	// 		body: body,
+	// 	}).then(res=>{callback(res)})
+	// 	.catch(res=>{console.log(res);});
+	// }
 
-	articleDelete(articleId, callback) {
-		fetch('/api/article/' + articleId, {method: 'DELETE'})
-		.then(res=>{callback(res)});
-	}
+	// articleDelete(articleId, callback) {
+	// 	fetch('/api/article/' + articleId, {method: 'DELETE'})
+	// 	.then(res=>{callback(res)});
+	// }
 
-	articleAdd(title, callback) {
-		const body = JSON.stringify({
-			title: title,
-		});
-		fetch('/api/article', {
-			method: 'PUT',
-			body: body,
-		}).then(res=>{callback(res)});
-	}
+	// articleAdd(title, callback) {
+	// 	const body = JSON.stringify({
+	// 		title: title,
+	// 	});
+	// 	fetch('/api/article', {
+	// 		method: 'PUT',
+	// 		body: body,
+	// 	}).then(res=>{callback(res)});
+	// }
 
 }
 
-export default new AjaxHelperClass()	;
+	export default new AjaxHelperClass();

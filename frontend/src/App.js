@@ -17,13 +17,20 @@ class App extends Component {
 			context: 'article',
 			accessToken: null,
 			userImage: null,
-			loading: null
+			loading: null,
+			loaderActive: false
 		};
 		this.addAccessToken = this.addAccessToken.bind(this);
+		this.loader = this.loader.bind(this);
 	}
 
 	addAccessToken(accessToken, imageUrl) {
 		this.setState({accessToken: accessToken, userImage: imageUrl});
+	}
+
+	loader(active) {
+		console.log(active)
+		this.setState({loaderActive: active})
 	}
 
 	render() {
@@ -33,13 +40,14 @@ class App extends Component {
 				<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken}/>
 			);
 		} else {
-			const client = new HttpClient(this.state.accessToken)
+			const client = new HttpClient(this.state.accessToken, this.loader)
 			console.log(client)
+
 			return (
 				<BrowserRouter>
 					<div className='container-fluid'>
 						<div className='row'>
-							<div className='col-sm-10'>
+							<div className='col-sm-9'>
 								<ul className='nav nav-tabs'>
 									<li className='nav-item'>
 										<RouteNavItem href="/article" title='Article'>Article</RouteNavItem>
@@ -51,6 +59,12 @@ class App extends Component {
 										<RouteNavItem href="/gym" title="Gym">Gym</RouteNavItem>
 									</li>
 								</ul>
+
+							</div>
+							<div className='col-sm-1'>
+								<div>
+									<div className={this.state.loaderActive ? 'loader' : 'loader hide'} ></div>
+								</div>
 							</div>
 							<div className='col-sm-2'>
 								<LoginInfo addAccessToken={this.addAccessToken} image={this.state.userImage}/>
