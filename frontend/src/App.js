@@ -63,7 +63,7 @@ class App extends Component {
 							</div>
 							<div className='col-sm-1'>
 								<div>
-									<div className={this.state.loaderActive ? 'loader' : 'loader hide'} ></div>
+									<div className={this.state.loaderActive ? 'loader' : 'loader hide'}></div>
 								</div>
 							</div>
 							<div className='col-sm-2'>
@@ -81,7 +81,11 @@ class App extends Component {
 							<Route path='/article'
 								   render={(props) => (<Article client={client}/>)}
 							/>
-							<Route path='/gym' component={Gym}/>
+							<Route path='/gym'
+								   render={(props) => (
+									   <Gym client={client}/>
+								   )}
+							/>
 							<Route path='/personal'
 								   render={(props) => (<Personal accessToken={this.state.accessToken}/>)}
 							/>

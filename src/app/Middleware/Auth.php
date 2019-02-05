@@ -6,6 +6,7 @@ namespace Middleware;
 use Model\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
 
 class Auth
 {
@@ -20,7 +21,7 @@ class Auth
 		$this->userRepository = $userRepository;
 	}
 
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+	public function __invoke(ServerRequestInterface $request, Response $response, callable $next): ResponseInterface
 	{
 		$token = null;
 		$headers = $request->getHeaders();
@@ -34,8 +35,7 @@ class Auth
 		if ($this->isTokenValid($token)) {
 			$response = $next($request, $response);
 		} else {
-			$response->getBody()->write('Permission denied');
-			$response->withStatus(403);
+			$response = $response->withStatus(403)->write('Permission denied');
 		}
 
 		return $response;
