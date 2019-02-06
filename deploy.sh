@@ -8,7 +8,7 @@ set -o nounset
 
 BRANCH=$1
 
-ssh idaho "cd /app/react-api/ && git fetch origin && git checkout ${BRANCH} && git checkout --force --detach ${BRANCH}"
+ssh idaho "cd /app/react-api/ && git fetch origin && git checkout --force --detach origin/${BRANCH}"
 
 cd ./frontend/
 npm run build
@@ -16,6 +16,8 @@ npm run build
 cd ../react/build/
 scp index_bundle.js idaho:/app/react-api/react/build/
 scp index.html idaho:/app/react-api/react/build/
+
+ssh idaho "cd /app/react-api/ && docker-compose down && docker-compose up -d"
 
 echo -e "\e[92mSuccessfully deployed"
 echo ' '

@@ -5,3 +5,4 @@ docker/mysql/*
 frontend/node_modules/*
 react/build/index.html
 react/build/index_bundle.js
+.env
