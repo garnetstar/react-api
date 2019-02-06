@@ -6,4 +6,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-docker exec -it slim-db bash -c "mysqldump -u root -pidaho slim > /backup/db_backup.sql"
+current_date_time="`date +%Y-%m-%d_%H:%M:%S`"
+
+docker exec slim-db bash -c "mysqldump -u root -pidaho slim | gzip > /backup/database_${current_date_time}.sql.gz"
+
