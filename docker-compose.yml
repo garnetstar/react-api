@@ -4,6 +4,7 @@ services:
   image: busybox
   volumes:
   - ./docker/mysql:/var/lib/mysql
+  - ./backup:/backup
  slim:
   build:
    context: .
