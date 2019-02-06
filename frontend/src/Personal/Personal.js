@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+	import React, {Component} from 'react';
+import GoogleLogin from 'react-google-login';
 
 class Personal extends Component {
 	constructor(props) {
@@ -8,12 +9,13 @@ class Personal extends Component {
 	}
 
 	render() {
-	 return(
-		 <div>
-		 Personal
-		 </div>
-
-	 );
+			console.log(this.props);
+		return (
+			<div>
+				Personal
+			</div>
+	)
+		;
 
 	}
 }

@@ -19,4 +19,3 @@ scp index.html idaho:/app/react-api/react/build/
 
 echo -e "\e[92mSuccessfully deployed"
 echo ' '
-

@@ -23,3 +23,15 @@ th, td {
   height: 600px;
   overflow: auto;
 }
+
+.loader
+{
+  background-image: url("./img/831.gif");
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+.hide{
+  display: none;
+}

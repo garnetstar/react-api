@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import ArticleDetail from './ArticleDetail';
 import {Link} from 'react-router-dom';
 import {Modal, ModalBody, ModalFooter, ModalHeader, Button} from 'reactstrap';
-import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
-
+import axios from 'axios';
 
 class Article extends Component {
 	constructor(props) {
 		super(props);
+		console.log('constructor');
 		this.state = {
 			gyms: null,
 			isLoaded: false,
@@ -16,9 +16,10 @@ class Article extends Component {
 			showNewArticleModal: false,
 			newArticleTitle: null,
 			newArticleId: null,
-			ajaxHelper: AjaxHelperClass,
+			articles: []
 		};
-		// this.setState({articleId: props.articleId});
+
+		this.client = this.props.client;
 		this.handleNewArticle = this.handleNewArticle.bind(this);
 		this.toggle = this.toggle.bind(this);
 		this.handleSaveArticle = this.handleSaveArticle.bind(this);
@@ -26,30 +27,27 @@ class Article extends Component {
 		this.handleModalKeyPress = this.handleModalKeyPress.bind(this);
 		this.refModalInput = React.createRef();
 		this.refSearchInput = React.createRef();
-		this.handleArticleSearch = this.handleArticleSearch.bind(this)
+		this.handleArticleSearch = this.handleArticleSearch.bind(this);
+		this.reloadList = this.reloadList.bind(this);
+
 	}
 
 	componentDidMount() {
-		this.reloadList();
+		console.log('didMount');
+		console.log(this.state);
+		this.setArticles()
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.articleId !== this.state.articleId) {
+			console.log('new articleId');
+			this.setState({articleId: nextProps.articleId})
+		}
+
 	}
 
 	reloadList() {
-		fetch('/api/article')
-			.then(res => res.json())
-			.then((result) => {
-					this.setState({
-						articles: result,
-						isLoaded: true,
-					});
-					this.refSearchInput.current.focus();
-				},
-				(error) => {
-					this.setState({
-						isLoaded: true,
-						error
-					});
-				}
-			);
+		this.setArticles();
 	}
 
 	handleClickArticle(i, e) {
@@ -74,71 +72,53 @@ class Article extends Component {
 	}
 
 	handleSaveArticle(e) {
-		const callback = function (res) {
-			res.json().then(json => {
-				this.setState({newArticleId: json.article_id});
-			});
-		}.bind(this);
-		this.state.ajaxHelper.articleAdd(this.state.newArticleTitle, callback);
+		let params = {title: this.state.newArticleTitle};
+		let url = '/api/article';
+
+		// HttpClient.get();
+		// axios.put(url, params, {headers: {'Content-Type': 'text/plain'}})
+		// 	.then((res) => {
+		// 		console.log(res);
+		// 		this.setState({newArticleId: res.data.article_id});
+		// 	})
+		// 	.catch(error => alert(error));
+
+		this.client.put(
+			url,
+			params,
+			(res) => {
+				console.log(res);
+				this.setState({newArticleId: res.data.article_id});
+			},
+			error => alert(error)
+		)
+
 		this.toggle();
 	}
 
 	handleArticleSearch(e) {
 		// e.preventDefault();
-		var word = e.target.value;
-		var url;
+		let word = e.target.value;
+		let url;
 		if (word === '') {
 			url = '/api/article';
 		} else {
 			url = '/api/article/filter/title/' + word;
 		}
-		fetch(url)
-			.then(res => res.json())
-			.then(
-				(result) => {
-					console.log(result);
-					this.setState({articles: result});
-				}
-			);
 
-
-	}
-
-	toggle() {
-		this.setState({
-			showNewArticleModal: !this.state.showNewArticleModal
-		});
-	}
-
-	handleNewArticleTitle(e) {
-		// console.log('handle title' + e.target.value);
-		this.setState({newArticleTitle: e.target.value});
-	}
-
-	componentWillReceiveProps(nextProps) {
-		this.setState({articleId: nextProps.articleId});
-		if (!nextProps.articleId) {
-			this.reloadList();
-		}
-		console.log('props ' + nextProps.articleId);
-	}
-
-	render() {
-		if (this.state.newArticleId !== null) {
-			const url = '/article/edit/' + this.state.newArticleId;
-			return (<Redirect to={url}/>);
-		}
-		else if (this.state.error) {
-			return (<b>Error</b>);
-		} else if (this.state.isLoaded === true) {
-			return (
-				this.renderList()
-			);
-		} else {
-			return (
-				<div>Loading...</div>
-			);
-		}
+		this.client.get(
+			url,
+			(result) => {
+				this.setState({
+					articles: result.data
+				})
+			},
+			(error) => {
+				this.setState({
+					'error': error.toString()
+				});
+			}
+		);
 	}
 
 	handleModalKeyPress(e) {
@@ -153,21 +133,48 @@ class Article extends Component {
 		console.log(e.key);
 	}
 
+	toggle() {
+		this.setState({
+			showNewArticleModal: !this.state.showNewArticleModal
+		});
+	}
+
+	handleNewArticleTitle(e) {
+		// console.log('handle title' + e.target.value);
+		this.setState({newArticleTitle: e.target.value});
+	}
+
+	render() {
+		if (this.state.newArticleId !== null) {
+			const url = '/article/edit/' + this.state.newArticleId;
+			return (<Redirect to={url}/>);
+		}
+		else if (this.state.error) {
+			return (<b>{this.state.error}</b>);
+		} else if (this.state.isLoaded === true) {
+			return (
+				this.renderList()
+			);
+		} else {
+			return (
+				<div>Loading...</div>
+			);
+		}
+	}
+
 	renderDetail() {
-
-
 		return (
 			<div>
-				<ArticleDetail articleId={this.state.articleId}/>
+				<ArticleDetail articleId={this.state.articleId} reloadArticles={this.reloadList} client={client}/>
 			</div>);
 	}
 
 	renderList() {
 		let articles = this.state.articles;
+		console.log(['articles', articles]);
 		const articleIdConst = parseInt(this.state.articleId, 10);
 		return (
 			<div onKeyPress={this.handleGlobalPress}>
-				<br/>
 				<div className='row'>
 					<div className='col-sm-3'>
 
@@ -201,7 +208,12 @@ class Article extends Component {
 					<div className='col-sm-9'>
 
 						{!isNaN(articleIdConst) && (
-							<ArticleDetail articleId={articleIdConst}/>
+							<ArticleDetail
+								articleId={articleIdConst}
+								// accessToken={this.state.accessToken}
+								reloadArticles={this.reloadList}
+								client={this.client}
+							/>
 						)}
 					</div>
 				</div>
@@ -233,6 +245,27 @@ class Article extends Component {
 			</div>
 		);
 	}
+
+	setArticles() {
+		this.client.get(
+			'/api/article',
+			(result) => {
+				this.setState({
+					articles: result.data,
+					isLoaded: true,
+				});
+				this.refSearchInput.current.focus();
+			},
+			(error) => {
+				console.log(error);
+				this.setState({
+					isLoaded: true,
+					'error': error.toString()
+				})
+			}
+		);
+	}
+
 }
 
 export default Article;

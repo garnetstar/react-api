@@ -3,17 +3,17 @@ services:
  data_mysql:
   image: busybox
   volumes:
-  - ./mysql:/var/lib/mysql
+  - ./docker/mysql:/var/lib/mysql
  slim:
-# jako image se pouzije Dockerfile
   build:
    context: .
+   dockerfile: docker/Dockerfile
   container_name: slim-web
   ports:
   - "8081:80"
   volumes:
-  - ./src:/var/www/html/
-  - ./000-default.conf:/etc/apache2/sites-available/000-default.conf 
+  - ./:/var/www/html/
+  - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
   links:
   - db:db
   env_file:
@@ -46,14 +46,14 @@ services:
 # jako image se pouzije Dockerfile
   build:
    context: .
-   dockerfile: Dockerfile-proxy
+   dockerfile: docker/Dockerfile-proxy
   container_name: proxy
 #  extra_hosts:
 #  - "docker.localhost:172.17.0.1"
   ports:
   - "80:80"
   volumes:
-  - ./proxy-default.conf:/etc/apache2/sites-available/000-default.conf 
+  - ./docker/proxy-default.conf:/etc/apache2/sites-available/000-default.conf
 
  react:
 # jako image se pouzije Dockerfile
@@ -64,4 +64,4 @@ services:
   - "81:80"
   volumes:
   - ./react/build:/var/www/html/public
-  - ./000-default.conf:/etc/apache2/sites-available/000-default.conf 
+  - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
