@@ -9,22 +9,30 @@ import RouteNavItem from "./RouteNavItem";
 import {HttpClient} from "./HttpClient";
 import LoginInfo from './LoginInfo.js';
 
-
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			context: 'article',
-			accessToken: null,
-			userImage: null,
 			loading: null,
-			loaderActive: false
+			loaderActive: false,
+			userImage: null,
+			accessToken: null,
 		};
 		this.addAccessToken = this.addAccessToken.bind(this);
 		this.loader = this.loader.bind(this);
+		this.state.accessToken = localStorage.getItem('token');
+		this.state.userImage = localStorage.getItem('image');
 	}
 
 	addAccessToken(accessToken, imageUrl) {
+		if (accessToken === null) {
+			localStorage.removeItem('token')
+			localStorage.removeItem('image')
+		} else {
+			localStorage.setItem('token', accessToken)
+			localStorage.setItem('image', imageUrl)
+		}
 		this.setState({accessToken: accessToken, userImage: imageUrl});
 	}
 
@@ -34,15 +42,12 @@ class App extends Component {
 	}
 
 	render() {
-		const accessToken = this.state.accessToken === null ? null : this.state.accessToken;
-		if (accessToken === null) {
+		if (this.state.accessToken === null) {
 			return (
 				<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken}/>
 			);
 		} else {
 			const client = new HttpClient(this.state.accessToken, this.loader)
-			console.log(client)
-
 			return (
 				<BrowserRouter>
 					<div className='container-fluid'>
@@ -90,7 +95,7 @@ class App extends Component {
 								   render={(props) => (<Personal accessToken={this.state.accessToken}/>)}
 							/>
 							<Route path='/login' render={(props) => (
-								<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken}/>)}/>
+								<Login addAccessToken={this.addAccessToken}/>)}/>
 						</Switch>
 					</div>
 				</BrowserRouter>
