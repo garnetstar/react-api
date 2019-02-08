@@ -73,7 +73,7 @@ class ArticleDetail extends Component {
 						</li>
 					</ul>
 
-					<b>{this.state.article.title}</b>
+					<h1>{this.state.article.title}</h1>
 					{this.state.article.content && (
 						<MarkdownRenderer markdown={this.state.article.content}/>
 					)}
