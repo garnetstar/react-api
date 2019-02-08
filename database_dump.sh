@@ -6,7 +6,11 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-current_date_time="`date +%Y-%m-%d_%H:%M:%S`"
+BACKUP_NAME="database_`date +%Y-%m-%d_%H:%M:%S`.sql.gz"
+APP_DIR="/app/react-api"
 
-docker exec slim-db bash -c "mysqldump -u root -pidaho slim | gzip > /backup/database_${current_date_time}.sql.gz"
+docker exec slim-db bash -c "mysqldump -u root -pidaho slim | gzip > /backup/${BACKUP_NAME}"
 
+scp ${APP_DIR}/backup/${BACKUP_NAME} nas:/volume1/data/garnetstar
+
+rm ${APP_DIR}/backup/${BACKUP_NAME}
