@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import MarkdownRenderer from 'react-markdown-renderer';
 import RouteNavItem from "../RouteNavItem";
 import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
-import axios from 'axios';
-import HttpClient from "../HttpClient.js";
+const ReactMarkdown = require('react-markdown')
 
 class ArticleDetail extends Component {
 	constructor(props) {
@@ -46,12 +44,6 @@ class ArticleDetail extends Component {
 					alert('error in handleDelete' + error)
 				}
 			);
-			// .then(res => {
-			// 	this.props.reloadArticles();
-			// 	console.log('redirect');
-			// 	this.setState({redirectToArticle: '/article'});
-			// })
-			// .catch(error => alert('error in handleDelete' + error));
 		}
 	}
 
@@ -75,7 +67,7 @@ class ArticleDetail extends Component {
 
 					<h1>{this.state.article.title}</h1>
 					{this.state.article.content && (
-						<MarkdownRenderer markdown={this.state.article.content}/>
+						<ReactMarkdown source={this.state.article.content} linkTarget="_blank" />
 					)}
 				</div>
 			);

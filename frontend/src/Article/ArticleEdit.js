@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import MarkdownRenderer from 'react-markdown-renderer';
+// import MarkdownRenderer from 'react-markdown-renderer';
 import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
-import axios from 'axios';
+const ReactMarkdown = require('react-markdown')
 
 class ArticleEdit extends Component {
 	constructor(props) {
@@ -141,7 +141,7 @@ class ArticleEdit extends Component {
 								ref={this.markDownScroll}
 								style={heightTextarea}
 							>
-								<MarkdownRenderer markdown={this.state.article.content}/>
+								<ReactMarkdown source={this.state.article.content}/>
 							</div>
 						</div>
 					</div>
