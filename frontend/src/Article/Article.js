@@ -3,7 +3,9 @@ import ArticleDetail from './ArticleDetail';
 import {Link} from 'react-router-dom';
 import {Modal, ModalBody, ModalFooter, ModalHeader, Button} from 'reactstrap';
 import {Redirect} from 'react-router-dom';
-import axios from 'axios';
+import ArticleSearch from './ArticleSearch'
+import ArticleList from './ArticleList'
+import NewArticleLink from './NewArticleLink'
 
 class Article extends Component {
 	constructor(props) {
@@ -36,6 +38,7 @@ class Article extends Component {
 		console.log('didMount');
 		console.log(this.state);
 		this.setArticles()
+		// this.refSearchInput.current.focus()
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -74,14 +77,6 @@ class Article extends Component {
 	handleSaveArticle(e) {
 		let params = {title: this.state.newArticleTitle};
 		let url = '/api/article';
-
-		// HttpClient.get();
-		// axios.put(url, params, {headers: {'Content-Type': 'text/plain'}})
-		// 	.then((res) => {
-		// 		console.log(res);
-		// 		this.setState({newArticleId: res.data.article_id});
-		// 	})
-		// 	.catch(error => alert(error));
 
 		this.client.put(
 			url,
@@ -176,33 +171,13 @@ class Article extends Component {
 		return (
 			<div onKeyPress={this.handleGlobalPress}>
 				<div className='row'>
-					<div className='col-sm-3'>
+					{/*<div className='col-sm-3'>*/}
+					<div className='slide-menu'>
 
-						<ul className='nav'>
-							<li className='nav-item'>
-								<a className='nav-link' onClick={this.handleNewArticle} href='#'>New article</a>
-							</li>
-						</ul>
+						<NewArticleLink handleNewArticle={this.handleNewArticle} />
+						<ArticleSearch refSearchInput={this.refSearchInput}  handleArticleSearch={this.handleArticleSearch}/>
+						<ArticleList articles={this.state.articles} actualArticleId={articleIdConst}/>
 
-						<div className='form-group'>
-							<input
-								ref={this.refSearchInput}
-								type='text'
-								className='form-control'
-								onChange={this.handleArticleSearch}
-							/>
-						</div>
-
-						<div className="list-group">
-							{articles.map((article, key) =>
-								<Link key={key}
-									  to={`/article/${article.article_id}`}
-									  className={`list-group-item list-group-item-action ${article.article_id === articleIdConst ? ' active' : ''}`}
-								>
-									{article.title}
-								</Link>
-							)}
-						</div>
 					</div>
 
 					<div className='col-sm-9'>
