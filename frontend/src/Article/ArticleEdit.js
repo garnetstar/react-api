@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-// import MarkdownRenderer from 'react-markdown-renderer';
 import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
 const ReactMarkdown = require('react-markdown')
