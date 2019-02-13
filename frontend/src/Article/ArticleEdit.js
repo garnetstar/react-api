@@ -27,6 +27,7 @@ class ArticleEdit extends Component {
 		this.handleTitle = this.handleTitle.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.updateDimensions = this.updateDimensions.bind(this);
+		this.handleSave = this.handleSave.bind(this)
 	}
 
 	componentDidMount() {
@@ -68,6 +69,26 @@ class ArticleEdit extends Component {
 				console.log(['error', error]);
 			}
 		);
+	}
+
+	handleSave(e) {
+		e.preventDefault();
+		let url = '/api/article/' + this.state.articleId;
+		let params = {
+			title: this.state.article.title,
+			content: this.state.article.content
+		};
+		this.client.post(
+			url,
+			params,
+			(result) => {
+				// this.setState({justSaved: true})
+			},
+			(error) => {
+				console.log(['error', error]);
+			}
+		);
+
 	}
 
 	handleContent(e) {
@@ -132,7 +153,8 @@ class ArticleEdit extends Component {
 								/>
 							</div>
 							<div className='form-group'>
-								<input type='submit' value='add'/>
+								<input type='submit' value='Save and leave'/>
+								<input type='submit' value='Save' onClick={this.handleSave} />
 							</div>
 						</div>
 						<div className='col-sm-6'>
