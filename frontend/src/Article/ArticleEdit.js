@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
+
 const ReactMarkdown = require('react-markdown')
+import TextAreaMD from '../TextAreaMD'
 
 class ArticleEdit extends Component {
 	constructor(props) {
@@ -90,8 +92,7 @@ class ArticleEdit extends Component {
 
 	}
 
-	handleContent(e) {
-		const content = e.target.value;
+	handleContent(content) {
 		const newArticle = {title: this.state.article.title, content: content};
 		this.setState({
 			article: newArticle,
@@ -138,33 +139,11 @@ class ArticleEdit extends Component {
 							</div>
 						</div>
 					</div>
-					<div className='row'>
-						<div className='col-sm-6'>
-							<div className="form-group">
-								<textarea
-									style={heightTextarea}
-									ref={this.leftScroll}
-									className='form-control'
-									onChange={this.handleContent}
-									onScroll={this.handleScroll}
-									value={this.state.article.content}
-									rows='25'
-								/>
-							</div>
-							<div className='form-group'>
-								<input type='submit' value='Save and leave'/>
-								<input type='submit' value='Save' onClick={this.handleSave} />
-							</div>
-						</div>
-						<div className='col-sm-6'>
-							<div
-								className='border markdownScroll'
-								ref={this.markDownScroll}
-								style={heightTextarea}
-							>
-								<ReactMarkdown source={this.state.article.content}/>
-							</div>
-						</div>
+					<TextAreaMD content={this.state.article.content} height={this.state.height - 180}
+								onChange={this.handleContent}/>
+					<div className='form-group'>
+						<input type='submit' value='Save and leave'/>
+						<input type='submit' value='Save' onClick={this.handleSave}/>
 					</div>
 				</form>
 			);
