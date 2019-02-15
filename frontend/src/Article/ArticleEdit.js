@@ -23,12 +23,13 @@ class ArticleEdit extends Component {
 		this.markDownScroll = React.createRef();
 		this.client = this.props.client;
 
-		this.handleContent = this.handleContent.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleTitle = this.handleTitle.bind(this);
-		this.handleScroll = this.handleScroll.bind(this);
-		this.updateDimensions = this.updateDimensions.bind(this);
+		this.handleContent = this.handleContent.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleTitle = this.handleTitle.bind(this)
+		this.handleScroll = this.handleScroll.bind(this)
+		this.updateDimensions = this.updateDimensions.bind(this)
 		this.handleSave = this.handleSave.bind(this)
+		this.handleCancel = this.handleCancel.bind(this)
 	}
 
 	componentDidMount() {
@@ -82,14 +83,16 @@ class ArticleEdit extends Component {
 		this.client.post(
 			url,
 			params,
-			(result) => {
-				// this.setState({justSaved: true})
-			},
+			(result) => {},
 			(error) => {
 				console.log(['error', error]);
 			}
 		);
+	}
 
+	handleCancel() {
+		const url = '/article/' + this.state.articleId;
+		return (<Redirect to={url}/>);
 	}
 
 	handleContent(content) {
@@ -142,8 +145,9 @@ class ArticleEdit extends Component {
 					<TextAreaMD content={this.state.article.content} height={this.state.height - 180}
 								onChange={this.handleContent}/>
 					<div className='form-group'>
-						<input type='submit' value='Save and leave'/>
 						<input type='submit' value='Save' onClick={this.handleSave}/>
+						<input type='submit' value='Save and leave'/>
+						<input type='submit' value='Cancel' onClick={this.handleCancel}/>
 					</div>
 				</form>
 			);
