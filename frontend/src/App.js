@@ -8,6 +8,10 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import RouteNavItem from "./RouteNavItem";
 import {HttpClient} from "./HttpClient";
 import LoginInfo from './LoginInfo.js';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faNewspaper} from '@fortawesome/free-solid-svg-icons'
+import {faChartLine} from '@fortawesome/free-solid-svg-icons'
+import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 
 class App extends Component {
 	constructor(props) {
@@ -50,18 +54,28 @@ class App extends Component {
 			const client = new HttpClient(this.state.accessToken, this.loader)
 			return (
 				<BrowserRouter>
+
 					<div className='container-fluid'>
 						<div className='row'>
 							<div className='col-sm-9'>
 								<ul className='nav nav-tabs'>
 									<li className='nav-item'>
-										<RouteNavItem href="/article" title='Article'>Article</RouteNavItem>
+										<RouteNavItem href="/article" title='Article'>
+											<FontAwesomeIcon icon={faNewspaper}/>
+											<span className='menuTitle'>Article</span>
+										</RouteNavItem>
 									</li>
 									<li className='nav-item'>
-										<RouteNavItem href="/personal" title="Personal">Personal</RouteNavItem>
+										<RouteNavItem href="/personal" title="Personal">
+											<FontAwesomeIcon icon={faExternalLinkAlt}/>
+											<span className='menuTitle'>Links</span>
+										</RouteNavItem>
 									</li>
 									<li className='nav-item'>
-										<RouteNavItem href="/gym" title="Gym">Gym</RouteNavItem>
+										<RouteNavItem href="/gym" title="Gym">
+											<FontAwesomeIcon icon={faChartLine}/>
+											<span className='menuTitle'>Gym</span>
+										</RouteNavItem>
 									</li>
 								</ul>
 

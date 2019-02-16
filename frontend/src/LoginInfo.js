@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 
 class LoginInfo extends Component {
 	constructor(props) {
@@ -21,7 +23,9 @@ class LoginInfo extends Component {
 		};
 		return (
 			<div>
-				<a href="#" onClick={this.logout}>Logout</a>
+				<a href="#" onClick={this.logout}>
+					<FontAwesomeIcon icon={faSignOutAlt} />
+				</a>
 				<img style={divStyle} src={this.image}/>
 			</div>
 		);
