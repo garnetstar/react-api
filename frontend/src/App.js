@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faNewspaper} from '@fortawesome/free-solid-svg-icons'
 import {faChartLine} from '@fortawesome/free-solid-svg-icons'
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
+import Media from "react-media";
 
 class App extends Component {
 	constructor(props) {
@@ -46,6 +47,7 @@ class App extends Component {
 	}
 
 	render() {
+		const mobSize = 599
 		if (this.state.accessToken === null) {
 			return (
 				<Login addAccessToken={this.addAccessToken} accessToken={this.state.accessToken}/>
@@ -53,66 +55,90 @@ class App extends Component {
 		} else {
 			const client = new HttpClient(this.state.accessToken, this.loader)
 			return (
-				<BrowserRouter>
+				<div>
+					<BrowserRouter>
+						<div className='container-fluid'>
+							<div className='row'>
+								<div className='col-sm-9'>
+									<ul className='nav nav-tabs'>
+										<li className='nav-item'>
+											<RouteNavItem href="/article" title='Article'>
+												<FontAwesomeIcon icon={faNewspaper}/>
+												<Media query={{maxWidth: mobSize}}>
+													{matches =>
+														matches ? (
+															<span></span>
+														) : (
+															<span className='menuTitle'>Article</span>
+														)
+													}
+												</Media>
+											</RouteNavItem>
+										</li>
+										<li className='nav-item'>
+											<RouteNavItem href="/personal" title="Personal">
+												<FontAwesomeIcon icon={faExternalLinkAlt}/>
+												<Media query={{maxWidth: mobSize}}>
+													{matches =>
+														matches ? (
+															<span></span>
+														) : (
+															<span className='menuTitle'>Links</span>
+														)
+													}
+												</Media>
+											</RouteNavItem>
+										</li>
+										<li className='nav-item'>
+											<RouteNavItem href="/gym" title="Gym">
+												<FontAwesomeIcon icon={faChartLine}/>
+												<Media query={{maxWidth: mobSize}}>
+													{matches =>
+														matches ? (
+															<span></span>
+														) : (
+															<span className='menuTitle'>Gym</span>
+														)
+													}
+												</Media>
 
-					<div className='container-fluid'>
-						<div className='row'>
-							<div className='col-sm-9'>
-								<ul className='nav nav-tabs'>
-									<li className='nav-item'>
-										<RouteNavItem href="/article" title='Article'>
-											<FontAwesomeIcon icon={faNewspaper}/>
-											<span className='menuTitle'>Article</span>
-										</RouteNavItem>
-									</li>
-									<li className='nav-item'>
-										<RouteNavItem href="/personal" title="Personal">
-											<FontAwesomeIcon icon={faExternalLinkAlt}/>
-											<span className='menuTitle'>Links</span>
-										</RouteNavItem>
-									</li>
-									<li className='nav-item'>
-										<RouteNavItem href="/gym" title="Gym">
-											<FontAwesomeIcon icon={faChartLine}/>
-											<span className='menuTitle'>Gym</span>
-										</RouteNavItem>
-									</li>
-								</ul>
-
-							</div>
-							<div className='col-sm-1'>
-								<div>
-									<div className={this.state.loaderActive ? 'loader' : 'loader hide'}></div>
+											</RouteNavItem>
+										</li>
+									</ul>
+								</div>
+								<div className='col-sm-1'>
+									<div>
+										<div className={this.state.loaderActive ? 'loader' : 'loader hide'}></div>
+									</div>
+								</div>
+								<div className='col-sm-2'>
+									<LoginInfo addAccessToken={this.addAccessToken} image={this.state.userImage}/>
 								</div>
 							</div>
-							<div className='col-sm-2'>
-								<LoginInfo addAccessToken={this.addAccessToken} image={this.state.userImage}/>
-							</div>
+							<Switch>
+								<Route path='/article/edit/:id'
+									   render={(props) => (
+										   <ArticleEdit articleId={props.match.params.id} client={client}/>)}/>
+								<Route path='/article/:number'
+									   render={(props) => (
+										   <Article articleId={props.match.params.number} client={client}/>)}/>
+								<Route path='/article'
+									   render={(props) => (<Article client={client}/>)}
+								/>
+								<Route path='/gym'
+									   render={(props) => (
+										   <Gym client={client}/>
+									   )}
+								/>
+								<Route path='/personal'
+									   render={(props) => (<Personal accessToken={this.state.accessToken}/>)}
+								/>
+								<Route path='/login' render={(props) => (
+									<Login addAccessToken={this.addAccessToken}/>)}/>
+							</Switch>
 						</div>
-
-						<Switch>
-							<Route path='/article/edit/:id'
-								   render={(props) => (
-									   <ArticleEdit articleId={props.match.params.id} client={client}/>)}/>
-							<Route path='/article/:number'
-								   render={(props) => (
-									   <Article articleId={props.match.params.number} client={client}/>)}/>
-							<Route path='/article'
-								   render={(props) => (<Article client={client}/>)}
-							/>
-							<Route path='/gym'
-								   render={(props) => (
-									   <Gym client={client}/>
-								   )}
-							/>
-							<Route path='/personal'
-								   render={(props) => (<Personal accessToken={this.state.accessToken}/>)}
-							/>
-							<Route path='/login' render={(props) => (
-								<Login addAccessToken={this.addAccessToken}/>)}/>
-						</Switch>
-					</div>
-				</BrowserRouter>
+					</BrowserRouter>
+				</div>
 			)
 		}
 		;
