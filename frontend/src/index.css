@@ -37,3 +37,12 @@ th, td {
 .menuTitle {
   margin-left: 10px;
 }
+
+.main-content{
+    margin-top: 40px;
+    word-break: break-word;
+}
+
+.menu {
+    background-color: #4E5D6C;
+}

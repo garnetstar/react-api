@@ -55,90 +55,105 @@ class App extends Component {
 		} else {
 			const client = new HttpClient(this.state.accessToken, this.loader)
 			return (
-				<div>
-					<BrowserRouter>
-						<div className='container-fluid'>
-							<div className='row'>
-								<div className='col-sm-9'>
-									<ul className='nav nav-tabs'>
-										<li className='nav-item'>
-											<RouteNavItem href="/article" title='Article'>
-												<FontAwesomeIcon icon={faNewspaper}/>
-												<Media query={{maxWidth: mobSize}}>
-													{matches =>
-														matches ? (
-															<span></span>
-														) : (
-															<span className='menuTitle'>Article</span>
-														)
-													}
-												</Media>
-											</RouteNavItem>
-										</li>
-										<li className='nav-item'>
-											<RouteNavItem href="/personal" title="Personal">
-												<FontAwesomeIcon icon={faExternalLinkAlt}/>
-												<Media query={{maxWidth: mobSize}}>
-													{matches =>
-														matches ? (
-															<span></span>
-														) : (
-															<span className='menuTitle'>Links</span>
-														)
-													}
-												</Media>
-											</RouteNavItem>
-										</li>
-										<li className='nav-item'>
-											<RouteNavItem href="/gym" title="Gym">
-												<FontAwesomeIcon icon={faChartLine}/>
-												<Media query={{maxWidth: mobSize}}>
-													{matches =>
-														matches ? (
-															<span></span>
-														) : (
-															<span className='menuTitle'>Gym</span>
-														)
-													}
-												</Media>
-
-											</RouteNavItem>
-										</li>
-									</ul>
-								</div>
-								<div className='col-sm-1'>
-									<div>
-										<div className={this.state.loaderActive ? 'loader' : 'loader hide'}></div>
+				<BrowserRouter>
+					<div className='container-fluid'>
+						<div className='row'>
+							<div className='col-sm-12'>
+								<div className="fixed-top clearfix menu">
+									<div className='float-left'>
+										<ul className="nav nav-pills">
+											<li className="nav-item">
+												<RouteNavItem href="/article" className='active' title='Article'>
+													<FontAwesomeIcon icon={faNewspaper}/>
+													<Media query={{maxWidth: mobSize}}>
+														{matches =>
+															matches ? (
+																<span></span>
+															) : (
+																<span className='menuTitle'>Article</span>
+															)
+														}
+													</Media>
+													{/*</a>*/}
+												</RouteNavItem>
+											</li>
+											<li className="nav-item">
+												<RouteNavItem href="/personal" title='Link'>
+													<FontAwesomeIcon icon={faExternalLinkAlt}/>
+													<Media query={{maxWidth: mobSize}}>
+														{matches =>
+															matches ? (
+																<span></span>
+															) : (
+																<span className='menuTitle'>Link</span>
+															)
+														}
+													</Media>
+												</RouteNavItem>
+											</li>
+											<li className="nav-item">
+												<RouteNavItem href="/gym" title='Chart'>
+													<FontAwesomeIcon icon={faChartLine}/>
+													<Media query={{maxWidth: mobSize}}>
+														{matches =>
+															matches ? (
+																<span></span>
+															) : (
+																<span className='menuTitle'>Chart</span>
+															)
+														}
+													</Media>
+												</RouteNavItem>
+											</li>
+										</ul>
+									</div>
+									<div className='float-right'>
+										<ul className="nav">
+											<li className='nav-item'>
+												<div
+													className={this.state.loaderActive ? 'loader' : 'loader hide'}></div>
+											</li>
+											<li className="nav-item">
+												<LoginInfo
+													addAccessToken={this.addAccessToken}
+													image={this.state.userImage}
+												/>
+											</li>
+										</ul>
 									</div>
 								</div>
-								<div className='col-sm-2'>
-									<LoginInfo addAccessToken={this.addAccessToken} image={this.state.userImage}/>
-								</div>
 							</div>
-							<Switch>
-								<Route path='/article/edit/:id'
-									   render={(props) => (
-										   <ArticleEdit articleId={props.match.params.id} client={client}/>)}/>
-								<Route path='/article/:number'
-									   render={(props) => (
-										   <Article articleId={props.match.params.number} client={client}/>)}/>
-								<Route path='/article'
-									   render={(props) => (<Article client={client}/>)}
-								/>
-								<Route path='/gym'
-									   render={(props) => (
-										   <Gym client={client}/>
-									   )}
-								/>
-								<Route path='/personal'
-									   render={(props) => (<Personal accessToken={this.state.accessToken}/>)}
-								/>
-								<Route path='/login' render={(props) => (
-									<Login addAccessToken={this.addAccessToken}/>)}/>
-							</Switch>
 						</div>
-					</BrowserRouter>
-				</div>
+						<div className='row main-content'>
+							<div className='col-sm-12'>
+								<Switch>
+									<Route path='/article/edit/:id'
+										   render={(props) => (
+											   <ArticleEdit articleId={props.match.params.id}
+															client={client}/>)}/>
+									<Route path='/article/:number'
+										   render={(props) => (
+											   <Article articleId={props.match.params.number}
+														client={client}/>)}/>
+									<Route path='/article'
+										   render={(props) => (<Article client={client}/>)}
+									/>
+									<Route path='/gym'
+										   render={(props) => (
+											   <Gym client={client}/>
+										   )}
+									/>
+									<Route path='/personal'
+										   render={(props) => (
+											   <Personal accessToken={this.state.accessToken}/>)}
+									/>
+									<Route path='/login' render={(props) => (
+										<Login addAccessToken={this.addAccessToken}/>)}/>
+								</Switch>
+							</div>
+						</div>
+					</div>
+				</BrowserRouter>
 			)
 		}
 		;

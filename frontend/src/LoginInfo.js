@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
 
 class LoginInfo extends Component {
 	constructor(props) {
@@ -18,15 +18,17 @@ class LoginInfo extends Component {
 	render() {
 		console.log(this.image)
 		var divStyle = {
-			width: '30px',
+			width: '21px',
 			'margin-left': '10px'
 		};
 		return (
 			<div>
-				<a href="#" onClick={this.logout}>
-					<FontAwesomeIcon icon={faSignOutAlt} />
+				<a href="#" className='nav-link' onClick={this.logout}>
+					<img style={divStyle} src={this.image}/>
+					<span className='menuTitle'>
+						<FontAwesomeIcon icon={faSignOutAlt}/>
+					</span>
 				</a>
-				<img style={divStyle} src={this.image}/>
 			</div>
 		);
 	}
