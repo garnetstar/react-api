@@ -83,7 +83,8 @@ class ArticleEdit extends Component {
 		this.client.post(
 			url,
 			params,
-			(result) => {},
+			(result) => {
+			},
 			(error) => {
 				console.log(['error', error]);
 			}
@@ -132,24 +133,24 @@ class ArticleEdit extends Component {
 		}
 		else if (this.state.isLoaded === true) {
 			return (
-				<form onSubmit={this.handleSubmit}>
-					<br/>
-					<div className='row'>
-						<div className='col-sm-12'>
-							<div className='form-group'>
-								<input className='form-control' type='text' onChange={this.handleTitle}
-									   value={this.state.article.title}/>
+					<form onSubmit={this.handleSubmit}>
+						<br/>
+						<div className='row main-content'>
+							<div className='col-sm-12'>
+								<div className='form-group'>
+									<input className='form-control' type='text' onChange={this.handleTitle}
+										   value={this.state.article.title}/>
+								</div>
 							</div>
 						</div>
-					</div>
-					<TextAreaMD content={this.state.article.content} height={this.state.height - 180}
-								onChange={this.handleContent}/>
-					<div className='form-group'>
-						<input type='submit' value='Save' onClick={this.handleSave}/>
-						<input type='submit' value='Save and leave'/>
-						<input type='submit' value='Cancel' onClick={this.handleCancel}/>
-					</div>
-				</form>
+						<TextAreaMD content={this.state.article.content} height={this.state.height - 180}
+									onChange={this.handleContent}/>
+						<div className='form-group'>
+							<input type='submit' value='Save' onClick={this.handleSave}/>
+							<input type='submit' value='Save and leave'/>
+							<input type='submit' value='Cancel' onClick={this.handleCancel}/>
+						</div>
+					</form>
 			);
 		} else {
 			return (

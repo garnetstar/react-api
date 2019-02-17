@@ -6,6 +6,9 @@ import {Redirect} from 'react-router-dom';
 import ArticleSearch from './ArticleSearch'
 import ArticleList from './ArticleList'
 import NewArticleLink from './NewArticleLink'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faBars} from '@fortawesome/free-solid-svg-icons'
+import Media from "react-media";
 
 class Article extends Component {
 	constructor(props) {
@@ -18,9 +21,11 @@ class Article extends Component {
 			showNewArticleModal: false,
 			newArticleTitle: null,
 			newArticleId: null,
-			articles: []
+			articles: [],
+			menu: 'menu-hide'
 		};
 
+		this.mobSize = props.mobSize
 		this.client = this.props.client;
 		this.handleNewArticle = this.handleNewArticle.bind(this);
 		this.toggle = this.toggle.bind(this);
@@ -31,6 +36,7 @@ class Article extends Component {
 		this.refSearchInput = React.createRef();
 		this.handleArticleSearch = this.handleArticleSearch.bind(this);
 		this.reloadList = this.reloadList.bind(this);
+		this.toggleMenu = this.toggleMenu.bind(this)
 
 	}
 
@@ -44,7 +50,12 @@ class Article extends Component {
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.articleId !== this.state.articleId) {
 			console.log('new articleId');
-			this.setState({articleId: nextProps.articleId})
+			this.setState(
+				{
+					articleId: nextProps.articleId,
+					menu: 'menu-hide'
+				}
+			)
 		}
 
 	}
@@ -124,10 +135,6 @@ class Article extends Component {
 		}
 	}
 
-	handleGlobalPress(e) {
-		console.log(e.key);
-	}
-
 	toggle() {
 		this.setState({
 			showNewArticleModal: !this.state.showNewArticleModal
@@ -137,6 +144,14 @@ class Article extends Component {
 	handleNewArticleTitle(e) {
 		// console.log('handle title' + e.target.value);
 		this.setState({newArticleTitle: e.target.value});
+	}
+
+	toggleMenu(e) {
+		this.state.menu === 'menu-hide' ? (
+			this.setState({menu: 'menu-show'})
+		) : (
+			this.setState({menu: 'menu-hide'})
+		)
 	}
 
 	render() {
@@ -165,37 +180,90 @@ class Article extends Component {
 	}
 
 	renderList() {
-		let articles = this.state.articles;
-		console.log(['articles', articles]);
-		const articleIdConst = parseInt(this.state.articleId, 10);
+		const articles = this.state.articles;
+		const articleIdConst = parseInt(this.state.articleId, 10)
+		const menuStyle = 'slide-menu ' + this.state.menu
+		const menu = <div>
+			<NewArticleLink handleNewArticle={this.handleNewArticle}/>
+			<ArticleSearch
+				refSearchInput={this.refSearchInput}
+				handleArticleSearch={this.handleArticleSearch}
+			/>
+			<ArticleList articles={this.state.articles} actualArticleId={articleIdConst}/>
+		</div>
+
+		const articleDetail = !isNaN(articleIdConst) && (
+			<ArticleDetail
+				articleId={articleIdConst}
+				// accessToken={this.state.accessToken}
+				reloadArticles={this.reloadList}
+				client={this.client}
+			/>
+		)
+
 		return (
-			<div onKeyPress={this.handleGlobalPress}>
+			<div>
+				<Media query={{maxWidth: this.mobSize}}>
+					{matches =>
+						matches ? (
+							<div className='row main-content'>
+								<div>
+									<button type="button" className="btn btn-primary" onClick={this.toggleMenu}>
+										<FontAwesomeIcon icon={faBars}/>
+									</button>
+								</div>
+								<div className={menuStyle}>
+									{menu}
+								</div>
+								<div className='col-sm-12'>
+									{articleDetail}
+								</div>
+							</div>
+						) : (
+							<div className='row main-content'>
+								<div className='col-sm-3 col-article-menu'>
+									<div className='no-slide-menu'>
+										{menu}
+									</div>
+								</div>
+								<div className='col-sm-9'>
+									{articleDetail}
+								</div>
+							</div>
+						)
+					}
+				</Media>
 
-				<div className='row'>
-					{/*<div className='col-sm-3'>*/}
-					<div className='slide-menu'>
+				{/*< divclassName = 'row' >*/}
 
-						<NewArticleLink handleNewArticle={this.handleNewArticle} />
-						<ArticleSearch refSearchInput={this.refSearchInput}  handleArticleSearch={this.handleArticleSearch}/>
-						<ArticleList articles={this.state.articles} actualArticleId={articleIdConst}/>
+				{/*< Media*/}
+				{/*query = {*/}
+				{/*{*/}
+				{/*maxWidth: this.mobSize*/}
+				{/*}*/}
+				{/*}>*/}
+				{/*{*/}
+				{/*matches =>*/}
+				{/*matches ? (*/}
+				{/*<div className={menuStyle}>*/}
+				{/*{menu}*/}
+				{/*</div>*/}
+				{/*) : (*/}
+				{/*<div className='no-slide-menu'>*/}
+				{/*{menu}*/}
+				{/*</div>*/}
+				{/*)*/}
+				{/*}*/}
+				{/*</Media>*/}
 
-					</div>
-
-					<div className='col-sm-9'>
-
-						{!isNaN(articleIdConst) && (
-							<ArticleDetail
-								articleId={articleIdConst}
-								// accessToken={this.state.accessToken}
-								reloadArticles={this.reloadList}
-								client={this.client}
-							/>
-						)}
-					</div>
-				</div>
+				{/*<div className='col-sm-9'>*/}
+				{/*{articleDetail}*/}
+				{/*</div>*/}
+				{/*</div>*/}
 
 
-				<Modal isOpen={this.state.showNewArticleModal} toggle={this.toggle} className={this.props.className}>
+				<Modal isOpen={this.state.showNewArticleModal} toggle={this.toggle}
+					   className={this.props.className}>
 					<form className='form-horizontal'>
 						<ModalHeader toggle={this.toggle}>New Article</ModalHeader>
 						<ModalBody>
@@ -216,8 +284,6 @@ class Article extends Component {
 						</ModalFooter>
 					</form>
 				</Modal>
-
-
 			</div>
 		);
 	}

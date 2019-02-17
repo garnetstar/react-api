@@ -74,7 +74,6 @@ class App extends Component {
 															)
 														}
 													</Media>
-													{/*</a>*/}
 												</RouteNavItem>
 											</li>
 											<li className="nav-item">
@@ -124,34 +123,34 @@ class App extends Component {
 								</div>
 							</div>
 						</div>
-						<div className='row main-content'>
-							<div className='col-sm-12'>
-								<Switch>
-									<Route path='/article/edit/:id'
-										   render={(props) => (
-											   <ArticleEdit articleId={props.match.params.id}
-															client={client}/>)}/>
-									<Route path='/article/:number'
-										   render={(props) => (
-											   <Article articleId={props.match.params.number}
-														client={client}/>)}/>
-									<Route path='/article'
-										   render={(props) => (<Article client={client}/>)}
-									/>
-									<Route path='/gym'
-										   render={(props) => (
-											   <Gym client={client}/>
-										   )}
-									/>
-									<Route path='/personal'
-										   render={(props) => (
-											   <Personal accessToken={this.state.accessToken}/>)}
-									/>
-									<Route path='/login' render={(props) => (
-										<Login addAccessToken={this.addAccessToken}/>)}/>
-								</Switch>
-							</div>
-						</div>
+						<Switch>
+							<Route path='/article/edit/:id'
+								   render={(props) => (
+									   <ArticleEdit articleId={props.match.params.id}
+													client={client}
+													mobSize={mobSize}
+									   />)}/>
+							<Route path='/article/:number'
+								   render={(props) => (
+									   <Article articleId={props.match.params.number}
+												client={client}
+												mobSize={mobSize}
+									   />)}/>
+							<Route path='/article'
+								   render={(props) => (<Article client={client} mobSize={mobSize}/>)}
+							/>
+							<Route path='/gym'
+								   render={(props) => (
+									   <Gym client={client}/>
+								   )}
+							/>
+							<Route path='/personal'
+								   render={(props) => (
+									   <Personal accessToken={this.state.accessToken}/>)}
+							/>
+							<Route path='/login' render={(props) => (
+								<Login addAccessToken={this.addAccessToken}/>)}/>
+						</Switch>
 					</div>
 				</BrowserRouter>
 			)

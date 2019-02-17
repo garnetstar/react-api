@@ -55,7 +55,7 @@ class ArticleDetail extends Component {
 		else if (this.state.isLoaded) {
 			const url = '/article/edit/' + this.state.article.article_id;
 			return (
-				<div>
+				<div className='article-detail'>
 					<ul className='nav justify-content-end'>
 						<li className='nav-item'>
 							<RouteNavItem href={url} title="Edit">Edit</RouteNavItem>

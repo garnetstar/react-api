@@ -35,14 +35,50 @@ th, td {
 }
 
 .menuTitle {
-  margin-left: 10px;
+    margin-left: 10px;
 }
 
-.main-content{
+.main-content {
     margin-top: 40px;
     word-break: break-word;
 }
 
 .menu {
     background-color: #4E5D6C;
+}
+
+.slide-menu {
+    position: absolute;
+    left: 0;
+    top: 80px;
+    transition: transform .3s;
+    /*height: 100vh;*/
+    z-index: 1;
+    background-color: #4E5D6C;
+}
+
+.slide-menu.menu-hide {
+    transform: translate3d(-100vw, 0, 0);
+}
+
+.slide-menu.menu-show {
+    transform: translate3d(0vw, 0, 0);
+    overflow: hidden;
+}
+
+.slide-menu.menu-wide {
+    position: relative;
+    top: 0
+}
+
+.no-slide-menu {
+    background-color: #4E5D6C;
+}
+
+.article-detail {
+    word-break: break-word;
+}
+
+.col-article-menu {
+    margin-left: 0;
 }

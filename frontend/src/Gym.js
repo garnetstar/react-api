@@ -117,7 +117,7 @@ class Gym extends Component {
 		const errorMessage = this.state.errorMessage;
 		const items = this.state.items;
 		return (
-			<div className='row'>
+			<div className='row main-content'>
 				<div className='col-sm-6'>
 					<div className='row'>
 						<div className='col-sm-12'>
