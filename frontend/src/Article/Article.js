@@ -22,10 +22,11 @@ class Article extends Component {
 			newArticleTitle: null,
 			newArticleId: null,
 			articles: [],
-			menu: 'menu-hide'
+			openMenu: true
 		};
 
 		this.mobSize = props.mobSize
+		this.closeMenu = props.closeMenu
 		this.client = this.props.client;
 		this.handleNewArticle = this.handleNewArticle.bind(this);
 		this.toggle = this.toggle.bind(this);
@@ -36,8 +37,6 @@ class Article extends Component {
 		this.refSearchInput = React.createRef();
 		this.handleArticleSearch = this.handleArticleSearch.bind(this);
 		this.reloadList = this.reloadList.bind(this);
-		this.toggleMenu = this.toggleMenu.bind(this)
-
 	}
 
 	componentDidMount() {
@@ -49,13 +48,15 @@ class Article extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.articleId !== this.state.articleId) {
-			console.log('new articleId');
 			this.setState(
 				{
 					articleId: nextProps.articleId,
-					menu: 'menu-hide'
-				}
+				}, this.closeMenu
 			)
+		}
+
+		if (nextProps.openMenu !== this.state.openMenu) {
+			this.setState({openMenu: nextProps.openMenu})
 		}
 
 	}
@@ -130,7 +131,6 @@ class Article extends Component {
 	handleModalKeyPress(e) {
 		if (e.key === 'Enter') {
 			e.preventDefault();
-			// console.log(e.key);
 			this.handleSaveArticle(e);
 		}
 	}
@@ -144,14 +144,6 @@ class Article extends Component {
 	handleNewArticleTitle(e) {
 		// console.log('handle title' + e.target.value);
 		this.setState({newArticleTitle: e.target.value});
-	}
-
-	toggleMenu(e) {
-		this.state.menu === 'menu-hide' ? (
-			this.setState({menu: 'menu-show'})
-		) : (
-			this.setState({menu: 'menu-hide'})
-		)
 	}
 
 	render() {
@@ -182,7 +174,9 @@ class Article extends Component {
 	renderList() {
 		const articles = this.state.articles;
 		const articleIdConst = parseInt(this.state.articleId, 10)
-		const menuStyle = 'slide-menu ' + this.state.menu
+		console.log(['menu',this.props.openMenu, this.state.openMenu, this.state])
+		const menuStyle = this.state.openMenu === true ?
+			'slide-menu menu-show' : 'slide-menu menu-hide'
 		const menu = <div>
 			<NewArticleLink handleNewArticle={this.handleNewArticle}/>
 			<ArticleSearch
@@ -195,7 +189,6 @@ class Article extends Component {
 		const articleDetail = !isNaN(articleIdConst) && (
 			<ArticleDetail
 				articleId={articleIdConst}
-				// accessToken={this.state.accessToken}
 				reloadArticles={this.reloadList}
 				client={this.client}
 			/>
@@ -207,11 +200,6 @@ class Article extends Component {
 					{matches =>
 						matches ? (
 							<div className='row main-content'>
-								<div>
-									<button type="button" className="btn btn-primary" onClick={this.toggleMenu}>
-										<FontAwesomeIcon icon={faBars}/>
-									</button>
-								</div>
 								<div className={menuStyle}>
 									{menu}
 								</div>
@@ -233,34 +221,6 @@ class Article extends Component {
 						)
 					}
 				</Media>
-
-				{/*< divclassName = 'row' >*/}
-
-				{/*< Media*/}
-				{/*query = {*/}
-				{/*{*/}
-				{/*maxWidth: this.mobSize*/}
-				{/*}*/}
-				{/*}>*/}
-				{/*{*/}
-				{/*matches =>*/}
-				{/*matches ? (*/}
-				{/*<div className={menuStyle}>*/}
-				{/*{menu}*/}
-				{/*</div>*/}
-				{/*) : (*/}
-				{/*<div className='no-slide-menu'>*/}
-				{/*{menu}*/}
-				{/*</div>*/}
-				{/*)*/}
-				{/*}*/}
-				{/*</Media>*/}
-
-				{/*<div className='col-sm-9'>*/}
-				{/*{articleDetail}*/}
-				{/*</div>*/}
-				{/*</div>*/}
-
 
 				<Modal isOpen={this.state.showNewArticleModal} toggle={this.toggle}
 					   className={this.props.className}>

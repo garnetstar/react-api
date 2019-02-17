@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faNewspaper} from '@fortawesome/free-solid-svg-icons'
 import {faChartLine} from '@fortawesome/free-solid-svg-icons'
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
+import {faBars} from '@fortawesome/free-solid-svg-icons'
 import Media from "react-media";
 
 class App extends Component {
@@ -23,11 +24,14 @@ class App extends Component {
 			loaderActive: false,
 			userImage: null,
 			accessToken: null,
+			openMenu: false
 		};
 		this.addAccessToken = this.addAccessToken.bind(this);
 		this.loader = this.loader.bind(this);
 		this.state.accessToken = localStorage.getItem('token');
-		this.state.userImage = localStorage.getItem('image');
+		this.state.userImage = localStorage.getItem('image')
+		this.toggleMenu = this.toggleMenu.bind(this)
+		this.closeMenu = this.closeMenu.bind(this)
 	}
 
 	addAccessToken(accessToken, imageUrl) {
@@ -42,8 +46,19 @@ class App extends Component {
 	}
 
 	loader(active) {
-		console.log(active)
 		this.setState({loaderActive: active})
+	}
+
+	toggleMenu() {
+		this.state.openMenu === true ? (
+			this.setState({openMenu: false})
+		) : (
+			this.setState({openMenu: true})
+		)
+	}
+
+	closeMenu() {
+		this.setState({openMenu: false})
 	}
 
 	render() {
@@ -62,6 +77,20 @@ class App extends Component {
 								<div className="fixed-top clearfix menu">
 									<div className='float-left'>
 										<ul className="nav nav-pills">
+											<li>
+												<Media query={{maxWidth: mobSize}}>
+													{matches =>
+														matches ? (
+															<a href='#' className='menu-button'
+															   onClick={this.toggleMenu}>
+																<FontAwesomeIcon icon={faBars}/>
+															</a>
+														) : (
+															<span></span>
+														)
+													}
+												</Media>
+											</li>
 											<li className="nav-item">
 												<RouteNavItem href="/article" className='active' title='Article'>
 													<FontAwesomeIcon icon={faNewspaper}/>
@@ -129,15 +158,24 @@ class App extends Component {
 									   <ArticleEdit articleId={props.match.params.id}
 													client={client}
 													mobSize={mobSize}
+
 									   />)}/>
 							<Route path='/article/:number'
 								   render={(props) => (
 									   <Article articleId={props.match.params.number}
 												client={client}
 												mobSize={mobSize}
+												openMenu={this.state.openMenu}
+												closeMenu={this.closeMenu}
 									   />)}/>
 							<Route path='/article'
-								   render={(props) => (<Article client={client} mobSize={mobSize}/>)}
+								   render={(props) => (
+									   <Article
+										   client={client}
+										   mobSize={mobSize}
+										   openMenu={this.state.openMenu}
+										   closeMenu={this.closeMenu}
+									   />)}
 							/>
 							<Route path='/gym'
 								   render={(props) => (
