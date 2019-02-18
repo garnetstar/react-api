@@ -16,10 +16,9 @@ class LoginInfo extends Component {
 	}
 
 	render() {
-		console.log(this.image)
 		var divStyle = {
 			width: '21px',
-			'margin-left': '10px'
+			'marginLeft': '10px'
 		};
 		return (
 			<div>
