@@ -11,6 +11,6 @@ APP_DIR="/app/react-api"
 
 docker exec slim-db bash -c "mysqldump -u root -pidaho slim | gzip > /backup/${BACKUP_NAME}"
 
-scp ${APP_DIR}/backup/${BACKUP_NAME} nas:/volume1/data/garnetstar
+scp -P 65500 ${APP_DIR}/backup/${BACKUP_NAME} nas:/volume1/data/garnetstar
 
 rm ${APP_DIR}/backup/${BACKUP_NAME}
