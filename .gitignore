@@ -6,3 +6,6 @@ frontend/node_modules/*
 react/build/index.html
 react/build/index_bundle.js
 .env
+node/src/node_modules/*
+node_modules/*
+backup/*

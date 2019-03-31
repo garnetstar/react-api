@@ -66,3 +66,18 @@ services:
   volumes:
   - ./react/build:/var/www/html/public
   - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
+
+ node:
+  build:
+    context: .
+    dockerfile: node/Dockerfile
+  volumes:
+  - ./node/src:/node
+  working_dir: /node
+  ports:
+  - "3001:3000"
+  - "9229:9229"
+  command:
+  - nodemon
+  - "--inspect=0.0.0.0"
+  - "./app.js"
