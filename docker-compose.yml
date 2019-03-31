@@ -1,10 +1,11 @@
-version: "2"
+version: "3"
 services:
  data_mysql:
   image: busybox
   volumes:
   - ./docker/mysql:/var/lib/mysql
   - ./backup:/backup
+
  slim:
   build:
    context: .
@@ -19,8 +20,6 @@ services:
   - db:db
   env_file:
   - .env
-#  networks:
-#  - esnet
  db:
   image: mysql:5.7
   container_name: slim-db
@@ -28,8 +27,9 @@ services:
   - "3306"
   ports:
   - "33062:3306"
-  volumes_from:
-  - data_mysql
+  volumes:
+  - ./docker/mysql:/var/lib/mysql
+  - ./backup:/backup
   environment:
   - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
   - MYSQL_DATABASE=${DB_NAME}
@@ -57,9 +57,9 @@ services:
   - ./docker/proxy-default.conf:/etc/apache2/sites-available/000-default.conf
 
  react:
-# jako image se pouzije Dockerfile
   build:
    context: .
+   dockerfile: docker/Dockerfile
   container_name: react
   ports:
   - "81:80"
