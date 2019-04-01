@@ -2,13 +2,13 @@ var express = require('express');
 var bodyParser = require('body-parser')
 
 var http = require('http');
-// var luigisBoxRouter = require('./routes/luigisBoxRouter');
+var cdnRouter = require('./routes/cdnRouter');
 var app = express();
 var port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// app.use('/lb', luigisBoxRouter);
+app.use('/cdn', cdnRouter);
 
 app.set('port', port);
 
