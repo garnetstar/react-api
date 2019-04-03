@@ -7,7 +7,7 @@ const readline = require('readline');
 const {google} = require('googleapis');
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -82,6 +82,7 @@ function listFiles(auth) {
 	}, (err, res) => {
 		if (err) return console.log('The API returned an error: ' + err);
 		const files = res.data.files;
+		console.log('Spojeni s drive navázázo, token uložen.')
 		if (files.length) {
 			console.log('Files:');
 			files.map((file) => {

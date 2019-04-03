@@ -1,7 +1,10 @@
 const {google} = require('googleapis');
 const cdnAuth = require('../model/CdnAuth');
+const fs = require('fs');
 
 exports.add = function (req, res) {
+
+	cdnAuth.useAuth(upload);
 
 	cdnAuth.useAuth(listFiles);
 
@@ -33,6 +36,29 @@ function listFiles(auth) {
 			});
 		} else {
 			console.log('No files found.');
+		}
+	});
+}
+
+function upload(auth) {
+	var fileMetadata = {
+		'name': 'photo.jpg'
+	};
+	var media = {
+		mimeType: 'image/jpeg',
+		body: fs.createReadStream('photo.jpg')
+	};
+	const drive = google.drive({version: 'v3', auth});
+	drive.files.create({
+		resource: fileMetadata,
+		media: media,
+		fields: 'id'
+	}, function (err, file) {
+		if (err) {
+			// Handle error
+			console.error(err);
+		} else {
+			console.log('File Id: ', file.id);
 		}
 	});
 }
