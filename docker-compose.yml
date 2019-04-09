@@ -81,3 +81,6 @@ services:
   - nodemon
   - "--inspect=0.0.0.0"
   - "./app.js"
+  environment:
+  - MYSQL_PASSWORD=${DB_PASSWORD}
+  - MYSQL_DATABASE=${DB_NAME}

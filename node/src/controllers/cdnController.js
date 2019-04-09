@@ -1,21 +1,21 @@
-const {google} = require('googleapis');
+const google = require('googleapis');
 const cdnAuth = require('../model/CdnAuth');
 const fs = require('fs');
+const mysql = require('mysql');
 
 exports.add = function (req, res) {
-
-	cdnAuth.useAuth(upload);
-
-	cdnAuth.useAuth(listFiles);
-
-	console.log('ok');
+	console.log(process.env.MYSQL_ROOT_PASSWORD);
 	res.end(JSON.stringify(test()));
 };
+
+exports.connect = function (req, res) {
+	console.log('OK!');
+	res.end(JSON.stringify('mysql test'));
+}
 
 function test() {
 	return 'test ok';
 }
-
 
 /**
  * Lists the names and IDs of up to 10 files.
