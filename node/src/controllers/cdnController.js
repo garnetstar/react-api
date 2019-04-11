@@ -1,7 +1,5 @@
 const google = require('googleapis');
-const cdnAuth = require('../model/CdnAuth');
 const fs = require('fs');
-const mysql = require('mysql');
 
 exports.add = function (req, res) {
 	console.log(process.env.MYSQL_ROOT_PASSWORD);
@@ -9,8 +7,19 @@ exports.add = function (req, res) {
 };
 
 exports.connect = function (req, res) {
+	console.log(req.headers);
+	console.log(req.body);
 	console.log('OK!');
 	res.end(JSON.stringify('mysql test'));
+}
+
+exports.upload = function (req, res) {
+
+	console.log(req.headers);
+	console.log(req.body);
+	console.log(req.file);
+
+	res.end(JSON.stringify('upload file'));
 }
 
 function test() {
