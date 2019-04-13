@@ -1,5 +1,7 @@
-const google = require('googleapis');
+const {google} = require('googleapis');
 const fs = require('fs');
+const auth = require('../model/CdnAuth');
+const http = require('http');
 
 exports.add = function (req, res) {
 	console.log(process.env.MYSQL_ROOT_PASSWORD);
@@ -15,11 +17,12 @@ exports.connect = function (req, res) {
 
 exports.upload = function (req, res) {
 
-	console.log(req.headers);
-	console.log(req.body);
-	console.log(req.file);
+	// console.log(req.headers);
+	// console.log(req.body);
 
-	res.end(JSON.stringify('upload file'));
+	upload(req.file);
+
+	res.end(JSON.stringify('file uploaded'));
 }
 
 function test() {
@@ -32,6 +35,7 @@ function test() {
  */
 function listFiles(auth) {
 	const drive = google.drive({version: 'v3', auth});
+
 	drive.files.list({
 		pageSize: 10,
 		fields: 'nextPageToken, files(id, name)',
@@ -49,25 +53,34 @@ function listFiles(auth) {
 	});
 }
 
-function upload(auth) {
-	var fileMetadata = {
-		'name': 'photo.jpg'
-	};
-	var media = {
-		mimeType: 'image/jpeg',
-		body: fs.createReadStream('photo.jpg')
-	};
-	const drive = google.drive({version: 'v3', auth});
-	drive.files.create({
-		resource: fileMetadata,
-		media: media,
-		fields: 'id'
-	}, function (err, file) {
-		if (err) {
-			// Handle error
-			console.error(err);
-		} else {
-			console.log('File Id: ', file.id);
-		}
+function upload(file) {
+
+	console.log(file);
+	auth.useAuth((auth) => {
+
+		var folderId = '10ramqC3eRfCBtzARMRDAUf6sV-_vKzLN';
+		var fileMetadata = {
+			'name': file.originalname,
+			parents: [folderId]
+		};
+
+		var media = {
+			mimeType: file.mimetype,
+			body: fs.createReadStream(file.path)
+		};
+		const drive = google.drive({version: 'v3', auth});
+		drive.files.create({
+			resource: fileMetadata,
+			media: media,
+			fields: 'id'
+		}, function (err, file) {
+			if (err) {
+				// Handle error
+				console.error(err);
+			} else {
+				console.log('File::', file.data.id);
+				console.log('File Id: ', file.id);
+			}
+		});
 	});
 }
