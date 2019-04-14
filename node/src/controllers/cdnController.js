@@ -20,66 +20,48 @@ exports.upload = function (req, res) {
 	// console.log(req.headers);
 	// console.log(req.body);
 
-	upload(req.file);
+	upload(req.file, res);
 
-	res.end(JSON.stringify('file uploaded'));
+	// res.end(JSON.stringify('file uploaded'));
 }
 
-function test() {
-	return 'test ok';
-}
-
-/**
- * Lists the names and IDs of up to 10 files.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function listFiles(auth) {
-	const drive = google.drive({version: 'v3', auth});
-
-	drive.files.list({
-		pageSize: 10,
-		fields: 'nextPageToken, files(id, name)',
-	}, (err, res) => {
-		if (err) return console.log('The API returned an error: ' + err);
-		const files = res.data.files;
-		if (files.length) {
-			console.log('Files:');
-			files.map((file) => {
-				console.log(`${file.name} (${file.id})`);
-			});
-		} else {
-			console.log('No files found.');
-		}
-	});
-}
-
-function upload(file) {
+function upload(file, res) {
 
 	console.log(file);
 	auth.useAuth((auth) => {
 
-		var folderId = '10ramqC3eRfCBtzARMRDAUf6sV-_vKzLN';
+		var folderId = '1pICrnk9h-0TSuV7yrzxayti99BdMkjBl';
 		var fileMetadata = {
 			'name': file.originalname,
 			parents: [folderId]
 		};
 
+		var path = file.path;
 		var media = {
 			mimeType: file.mimetype,
-			body: fs.createReadStream(file.path)
+			body: fs.createReadStream(path)
 		};
 		const drive = google.drive({version: 'v3', auth});
 		drive.files.create({
 			resource: fileMetadata,
 			media: media,
-			fields: 'id'
+			fields: 'id, thumbnailLink'
 		}, function (err, file) {
 			if (err) {
 				// Handle error
 				console.error(err);
 			} else {
-				console.log('File::', file.data.id);
-				console.log('File Id: ', file.id);
+				// delete file from server
+				fs.unlinkSync(path);
+				console.log('File:', file.data);
+				const url = 'https://drive.google.com/uc?export=view&id=' + file.data.id;
+
+				res.writeHead(200, {"Content-Type": "application/json"});
+				res.end(JSON.stringify({
+					'status': 'uploaded',
+					'url': url,
+					'thumbnailLink': file.data.thumbnailLink
+				}));
 			}
 		});
 	});

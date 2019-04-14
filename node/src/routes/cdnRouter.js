@@ -4,7 +4,7 @@ var auth = require('../model/Auth');
 var bodyParser = require('body-parser');
 
 var multer = require('multer');
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'tmp/' })
 
 var cdnController = require('../controllers/cdnController');
 
