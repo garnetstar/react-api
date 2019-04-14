@@ -1,7 +1,7 @@
 const {google} = require('googleapis');
 const fs = require('fs');
 const auth = require('../model/CdnAuth');
-const http = require('http');
+const database = require('../model/Database');
 
 exports.add = function (req, res) {
 	console.log(process.env.MYSQL_ROOT_PASSWORD);
@@ -16,28 +16,23 @@ exports.connect = function (req, res) {
 }
 
 exports.upload = function (req, res) {
-
-	// console.log(req.headers);
-	// console.log(req.body);
-
-	upload(req.file, res);
-
-	// res.end(JSON.stringify('file uploaded'));
+	// console.log(req.body.data);
+	upload(req.file, req.body.source, res);
 }
 
-function upload(file, res) {
-
+function upload(file, source, res) {
 	console.log(file);
+
 	auth.useAuth((auth) => {
 
-		var folderId = '1pICrnk9h-0TSuV7yrzxayti99BdMkjBl';
-		var fileMetadata = {
+		const folderId = '1pICrnk9h-0TSuV7yrzxayti99BdMkjBl';
+		const fileMetadata = {
 			'name': file.originalname,
 			parents: [folderId]
 		};
 
-		var path = file.path;
-		var media = {
+		const path = file.path;
+		const media = {
 			mimeType: file.mimetype,
 			body: fs.createReadStream(path)
 		};
@@ -55,6 +50,10 @@ function upload(file, res) {
 				fs.unlinkSync(path);
 				console.log('File:', file.data);
 				const url = 'https://drive.google.com/uc?export=view&id=' + file.data.id;
+
+				database.addImage(file.data.id, url, file.data.thumbnailLink, source, function () {
+					console.log('SUCCESS! file uploaded to drive and saved to db');
+				});
 
 				res.writeHead(200, {"Content-Type": "application/json"});
 				res.end(JSON.stringify({
