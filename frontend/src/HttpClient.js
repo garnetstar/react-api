@@ -59,6 +59,26 @@ export class HttpClient {
 			.catch((result) => errorCallback(result))
 	}
 
+	cdnUpload(file, source, successCallback) {
+		const formData = new FormData();
+		formData.append('image',file);
+		formData.append('source', source);
+		console.log('formdata', formData.getAll('image'));
+		axios.post(
+			'/cdn/upload',
+			formData,
+			this.getMultipartHeaders())
+			.then((result) => {
+				// successCallback(result)
+				// this.loader(false)
+				successCallback(result.data);
+				console.log(['Success>>', result]);
+			})
+			.catch((result) => {
+				console.log('ERROR', result);
+			});
+	}
+
 	getHeader() {
 		return {
 			headers: {
@@ -66,5 +86,14 @@ export class HttpClient {
 				'Content-Type': 'text/plain'
 			}
 		};
+	}
+
+	getMultipartHeaders() {
+		return {
+			headers: {
+				'Authorization': "Bearer " + this.token,
+				'content-type': 'multipart/form-data'
+			}
+		}
 	}
 }

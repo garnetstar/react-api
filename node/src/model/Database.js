@@ -10,15 +10,18 @@ exports.findUserByToken = function (token, callback) {
 	});
 };
 
-exports.addImage = (id, imageUrl, thumbUrl, source, callback) => {
+exports.addImage = (id, imageUrl, thumbUrl, mimetype, size, source, callback) => {
 
 	const args = {
 		id: id,
 		url: imageUrl,
 		thumb_url: thumbUrl,
+		mimetype: mimetype,
+		size: size,
 		source: source
 	};
 
+	console.log('DBD:', args);
 	const query = 'INSERT INTO `image` SET ?';
 	const pool = getConnection();
 	pool.query(query, args, function (err, res, fields) {
