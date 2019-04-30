@@ -78,9 +78,10 @@ services:
   - "3001:3000"
   - "9229:9229"
   command:
-  - nodemon
-  - "--inspect=0.0.0.0"
-  - "./app.js"
+  - 'forever'
+  - '-c'
+  - 'nodemon --exitcrash'
+  - './app.js'
   environment:
   - MYSQL_PASSWORD=${DB_PASSWORD}
   - MYSQL_DATABASE=${DB_NAME}
