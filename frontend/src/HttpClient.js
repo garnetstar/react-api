@@ -59,10 +59,12 @@ export class HttpClient {
 			.catch((result) => errorCallback(result))
 	}
 
-	cdnUpload(file, source, successCallback) {
+	cdnUpload(file, source, tags, successCallback, errorCallback) {
 		const formData = new FormData();
 		formData.append('image',file);
 		formData.append('source', source);
+		formData.append('tags', tags);
+
 		console.log('formdata', formData.getAll('image'));
 		axios.post(
 			'/cdn/upload',
@@ -76,6 +78,7 @@ export class HttpClient {
 			})
 			.catch((result) => {
 				console.log('ERROR', result);
+				errorCallback(result);
 			});
 	}
 

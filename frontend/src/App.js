@@ -103,7 +103,7 @@ class App extends Component {
 							/>
 							<Route path='/personal'
 								   render={(props) => (
-									   <Personal accessToken={this.state.accessToken}/>)}
+									   <Personal accessToken={this.state.accessToken} client={client}/>)}
 							/>
 							<Route path='/login' render={(props) => (
 								<Login addAccessToken={this.addAccessToken}/>)}/>

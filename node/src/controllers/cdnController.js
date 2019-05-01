@@ -15,12 +15,11 @@ exports.connect = function (req, res) {
 	res.end(JSON.stringify('mysql test'));
 }
 
-exports.upload = function (req, res) {
-	// console.log(req.body.data);
-	upload(req.file, req.body.source, res);
+exports.upload = function (req, res, next) {
+	upload(req.file, req.body.source, req.body.tags, res, next);
 }
 
-function upload(file, source, res) {
+function upload(file, source, tags, res, next) {
 	console.log(file);
 
 	auth.useAuth((auth) => {
@@ -46,18 +45,9 @@ function upload(file, source, res) {
 			if (err) {
 				// Handle error
 				console.log('NodeError:', err);
-				console.error(err);
+				next(err);
+
 			} else {
-
-				// res.end(JSON.stringify({
-				// 	'status': 'uploaded',
-				// 	'id': 'idimageisdofnsdfls',
-				// 	'url': 'http://imageurls.com.google/nejde/cz',
-				// 	'thumbnailLink': 'http://url.takynejde.pojebanej.vlak/cz',
-				// 	'source': source,
-				// 	'size': 900000
-				// }));
-
 
 				// delete file from server
 				fs.unlinkSync(path);
@@ -83,6 +73,7 @@ function upload(file, source, res) {
 					'url': url,
 					'thumbnailLink': image.data.thumbnailLink,
 					'source': source,
+					'tags': tags,
 					'size': image.data.size,
 					'mimetype': file.mimetype
 				}));
