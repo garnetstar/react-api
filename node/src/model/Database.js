@@ -28,7 +28,7 @@ exports.addImage = (id, imageUrl, thumbUrl, mimetype, size, source, callback) =>
 
 		if (err) throw new Error(err);
 
-		callback();
+		callback(res);
 	});
 };
 

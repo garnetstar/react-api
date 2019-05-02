@@ -54,6 +54,9 @@ function upload(file, source, tags, res, next) {
 				console.log('File:', image.data);
 				const url = 'https://drive.google.com/uc?export=view&id=' + image.data.id;
 
+
+				console.log(splitTags(tags));
+
 				database.addImage(
 					image.data.id,
 					url,
@@ -61,8 +64,8 @@ function upload(file, source, tags, res, next) {
 					file.mimetype,
 					parseInt(image.data.size),
 					source,
-					function () {
-						console.log('SUCCESS! file uploaded to drive and saved to db');
+					function (fields) {
+						console.log('SUCCESS! file uploaded to drive and saved to db', fields);
 					}
 				);
 
@@ -77,9 +80,13 @@ function upload(file, source, tags, res, next) {
 					'size': image.data.size,
 					'mimetype': file.mimetype
 				}));
-
-
 			}
 		});
+	});
+}
+
+function splitTags(tags) {
+	return tags.split(',').map(item => {
+		return item.trim();
 	});
 }
