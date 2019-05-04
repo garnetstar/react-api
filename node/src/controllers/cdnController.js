@@ -17,18 +17,14 @@ exports.connect = function (req, res) {
 }
 
 exports.images = (req, res, next) => {
-
-	database.getImages((err, dbresp) => {
+	database.getImages((err, data) => {
 		if (err) {
 			next(err);
 		} else {
-			// console.log(dbresp);
 			res.writeHead(200, {"Content-Type": "application/json"});
-			res.end(JSON.stringify(dbresp));
+			res.end(JSON.stringify(data));
 		}
 	});
-
-
 }
 
 exports.upload = function (req, res, next) {
@@ -40,84 +36,91 @@ function upload(file, source, tags, res, next) {
 
 	auth.useAuth((auth) => {
 
-		// console.log(file);
-		const folderId = '1pICrnk9h-0TSuV7yrzxayti99BdMkjBl';
-		const fileMetadata = {
-			'name': file.originalname,
-			parents: [folderId]
-		};
-
-		const path = file.path;
-		const media = {
-			mimeType: file.mimetype,
-			body: fs.createReadStream(path)
-		};
-		const drive = google.drive({version: 'v3', auth});
-		drive.files.create({
-			resource: fileMetadata,
-			media: media,
-			fields: 'id, thumbnailLink, size'
-		}, function (err, image) {
+		async.waterfall([
+			function (callback) {
+				uploadImageToDrive(callback, file, auth);
+			},
+			function (image, url, callback) {
+				addImageToDB(callback, image, url, source);
+			},
+			function (image, url, callback) {
+				sendResponse(callback, res, image, url, source, tags);
+			}
+		], function (err, results) {
 			if (err) {
-				// Handle error
-				console.log('NodeError:', err);
+				console.log('ASYNC error');
 				next(err);
-
 			} else {
-
-				// delete file from server
-				fs.unlinkSync(path);
-				// console.log('File:', image.data);
-				const url = 'https://drive.google.com/uc?export=view&id=' + image.data.id;
-
-
-				// console.log(splitTags(tags));
-
-				async.series([
-					function (callback) {
-
-						database.addImage(
-							image.data.id,
-							url,
-							image.data.thumbnailLink,
-							file.mimetype,
-							parseInt(image.data.size),
-							source,
-							function (fields) {
-								callback(null, fields);
-								// console.log('SUCCESS! file uploaded to drive and saved to db', fields);
-							}
-						);
-
-						// callback(err, 'one');
-					},
-					function (callback) {
-
-						res.writeHead(200, {"Content-Type": "application/json"});
-						res.end(JSON.stringify({
-							'status': 'uploaded',
-							'id': image.data.id,
-							'url': url,
-							'thumbnailLink': image.data.thumbnailLink,
-							'source': source,
-							'tags': tags,
-							'size': image.data.size,
-							'mimetype': file.mimetype
-						}));
-
-						callback(null, null);
-					}
-				], function (err, results) {
-					console.log('ASYNC', results);
-				});
-
+				console.log('ASYNC OK');
 			}
 		});
+
 	});
 }
 
-function splitTags(tags) {
-	return tags.split(',').map(item => {
-		return item.trim();
+function uploadImageToDrive(callback, file, auth) {
+	// console.log(file);
+	const folderId = '1pICrnk9h-0TSuV7yrzxayti99BdMkjBl';
+	const fileMetadata = {
+		'name': file.originalname,
+		parents: [folderId]
+	};
+
+	const path = file.path;
+	const media = {
+		mimeType: file.mimetype,
+		body: fs.createReadStream(path)
+	};
+	const drive = google.drive({version: 'v3', auth});
+
+	//https://developers.google.com/drive/api/v3/reference/files
+	drive.files.create({
+		resource: fileMetadata,
+		media: media,
+		fields: 'id, thumbnailLink, size, mimeType'
+	}, function (err, image) {
+		// delete file from server
+		fs.unlinkSync(path);
+
+		if (err) {
+			callback(err);
+		} else {
+			// console.log('Image:', image.data);
+			const url = 'https://drive.google.com/uc?export=view&id=' + image.data.id;
+			callback(null, image, url);
+		}
 	});
+
+}
+
+function addImageToDB(callback, image, url, source) {
+
+	database.addImage(
+		image.data.id,
+		url,
+		image.data.thumbnailLink,
+		image.data.mimeType,
+		parseInt(image.data.size),
+		source,
+		function (fields) {
+			callback(null, image, url);
+			// console.log('SUCCESS! file uploaded to drive and saved to db', fields);
+		}
+	);
+}
+
+function sendResponse(callback, res, image, url, source, tags) {
+	res.writeHead(200, {"Content-Type": "application/json"});
+	res.end(JSON.stringify({
+		'status': 'uploaded',
+		'id': image.data.id,
+		'url': url,
+		'thumbnailLink': image.data.thumbnailLink,
+		'source': source,
+		'tags': tags,
+		'size': image.data.size,
+		'mimetype': image.data.mimeType
+	}));
+
+	callback(null, null);
 }
