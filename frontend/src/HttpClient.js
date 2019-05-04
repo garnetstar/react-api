@@ -82,6 +82,10 @@ export class HttpClient {
 			});
 	}
 
+	getImages(successCallback, errorCallback) {
+		this.get('/cdn/images', successCallback, errorCallback);
+	}
+
 	getHeader() {
 		return {
 			headers: {

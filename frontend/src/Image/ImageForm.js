@@ -172,7 +172,7 @@ class ImageForm extends Component {
 			showData: true, responseData: data
 		});
 
-		this.successCallback();
+		this.successCallback(data.id);
 	}
 
 	onError(data) {

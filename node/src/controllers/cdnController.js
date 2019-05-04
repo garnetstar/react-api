@@ -2,6 +2,7 @@ const {google} = require('googleapis');
 const fs = require('fs');
 const auth = require('../model/CdnAuth');
 const database = require('../model/Database');
+const async = require('async');
 
 exports.add = function (req, res) {
 	console.log(process.env.MYSQL_ROOT_PASSWORD);
@@ -13,6 +14,21 @@ exports.connect = function (req, res) {
 	console.log(req.body);
 	console.log('OK!!!');
 	res.end(JSON.stringify('mysql test'));
+}
+
+exports.images = (req, res, next) => {
+
+	database.getImages((err, dbresp) => {
+		if (err) {
+			next(err);
+		} else {
+			// console.log(dbresp);
+			res.writeHead(200, {"Content-Type": "application/json"});
+			res.end(JSON.stringify(dbresp));
+		}
+	});
+
+
 }
 
 exports.upload = function (req, res, next) {
@@ -51,35 +67,50 @@ function upload(file, source, tags, res, next) {
 
 				// delete file from server
 				fs.unlinkSync(path);
-				console.log('File:', image.data);
+				// console.log('File:', image.data);
 				const url = 'https://drive.google.com/uc?export=view&id=' + image.data.id;
 
 
-				console.log(splitTags(tags));
+				// console.log(splitTags(tags));
 
-				database.addImage(
-					image.data.id,
-					url,
-					image.data.thumbnailLink,
-					file.mimetype,
-					parseInt(image.data.size),
-					source,
-					function (fields) {
-						console.log('SUCCESS! file uploaded to drive and saved to db', fields);
+				async.series([
+					function (callback) {
+
+						database.addImage(
+							image.data.id,
+							url,
+							image.data.thumbnailLink,
+							file.mimetype,
+							parseInt(image.data.size),
+							source,
+							function (fields) {
+								callback(null, fields);
+								// console.log('SUCCESS! file uploaded to drive and saved to db', fields);
+							}
+						);
+
+						// callback(err, 'one');
+					},
+					function (callback) {
+
+						res.writeHead(200, {"Content-Type": "application/json"});
+						res.end(JSON.stringify({
+							'status': 'uploaded',
+							'id': image.data.id,
+							'url': url,
+							'thumbnailLink': image.data.thumbnailLink,
+							'source': source,
+							'tags': tags,
+							'size': image.data.size,
+							'mimetype': file.mimetype
+						}));
+
+						callback(null, null);
 					}
-				);
+				], function (err, results) {
+					console.log('ASYNC', results);
+				});
 
-				res.writeHead(200, {"Content-Type": "application/json"});
-				res.end(JSON.stringify({
-					'status': 'uploaded',
-					'id': image.data.id,
-					'url': url,
-					'thumbnailLink': image.data.thumbnailLink,
-					'source': source,
-					'tags': tags,
-					'size': image.data.size,
-					'mimetype': file.mimetype
-				}));
 			}
 		});
 	});

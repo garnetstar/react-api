@@ -21,7 +21,7 @@ exports.addImage = (id, imageUrl, thumbUrl, mimetype, size, source, callback) =>
 		source: source
 	};
 
-	console.log('DBD:', args);
+	// console.log('DBD:', args);
 	const query = 'INSERT INTO `image` SET ?';
 	const pool = getConnection();
 	pool.query(query, args, function (err, res, fields) {
@@ -31,6 +31,14 @@ exports.addImage = (id, imageUrl, thumbUrl, mimetype, size, source, callback) =>
 		callback(res);
 	});
 };
+
+exports.getImages = (callback) => {
+	const query = 'SELECT * FROM `image` ORDER BY `created` DESC LIMIT 10';
+	const pool = getConnection();
+	pool.query(query, null, (err, res, fields) => {
+		callback(err, res);
+	});
+}
 
 function getConnection() {
 	const pass = process.env.MYSQL_PASSWORD;

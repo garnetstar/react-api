@@ -9,3 +9,5 @@ react/build/index_bundle.js
 node/src/node_modules/*
 node_modules/*
 backup/*
+node/src/tmp/*
+node/src/token.json
