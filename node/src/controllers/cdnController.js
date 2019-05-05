@@ -63,7 +63,8 @@ function upload(file, source, tags, res, next) {
 
 function uploadImageToDrive(callback, file, auth) {
 	// console.log(file);
-	const folderId = '1pICrnk9h-0TSuV7yrzxayti99BdMkjBl';
+	const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+	console.log('folder:', folderId);
 	const fileMetadata = {
 		'name': file.originalname,
 		parents: [folderId]
