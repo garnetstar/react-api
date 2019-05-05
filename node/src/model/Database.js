@@ -32,17 +32,36 @@ exports.addImage = (id, imageUrl, thumbUrl, mimetype, size, source, callback) =>
 	});
 };
 
-exports.getImages = (callback) => {
-	const query = 'SELECT * FROM `image` ORDER BY `created` DESC LIMIT 10';
+exports.getImages = (limit = 10, page = 1, callback) => {
 	const pool = getConnection();
-	pool.query(query, null, (err, res, fields) => {
-		callback(err, res);
+	pool.getConnection(function (err, conn) {
+
+		if (err) throw err;
+
+		const limitParam = parseInt(limit);
+		const pageParam = parseInt(page);
+
+		const offset = (pageParam - 1) * limitParam;
+
+		const query = 'SELECT SQL_CALC_FOUND_ROWS * FROM `image` ORDER BY `created` DESC LIMIT ? OFFSET ?';
+		conn.query(query, [limitParam, offset], (err, res, fields) => {
+
+			const data = res;
+
+			conn.query('SELECT FOUND_ROWS() as count', function (err, res) {
+
+				const totalPages = Math.ceil(res[0].count / limitParam);
+
+				callback(err, data, totalPages);
+			});
+		});
 	});
 }
 
 function getConnection() {
 	const pass = process.env.MYSQL_PASSWORD;
 	const database = process.env.MYSQL_DATABASE;
+
 	const pool = mysql.createPool({
 		connectionLimit: 10,
 		host: 'db',

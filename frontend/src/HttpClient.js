@@ -82,8 +82,8 @@ export class HttpClient {
 			});
 	}
 
-	getImages(successCallback, errorCallback) {
-		this.get('/cdn/images', successCallback, errorCallback);
+	getImages(page, successCallback, errorCallback) {
+		this.get('/cdn/images?limit=3&page='+page, successCallback, errorCallback);
 	}
 
 	getHeader() {

@@ -7,10 +7,13 @@ class ImageList extends Component {
 		this.client = props.client;
 
 		this.state = {
-			images: []
+			images: [],
+			countPages: 0,
+			actualPage: 1
 		};
 
 		this.loadImages = this.loadImages.bind(this);
+		this.handleChangePage = this.handleChangePage.bind(this);
 	}
 
 	componentDidMount() {
@@ -18,7 +21,7 @@ class ImageList extends Component {
 	}
 
 	componentWillReceiveProps(nextProps, nextContext) {
-		if(this.props.refreshId !== nextProps.refreshId) {
+		if (this.props.refreshId !== nextProps.refreshId) {
 			this.loadImages();
 		}
 	}
@@ -26,15 +29,26 @@ class ImageList extends Component {
 	render() {
 
 		const images = this.state.images;
+		const countPages = parseInt(this.state.countPages);
+		const thumbStyle = {}
 
+		console.log('IMAGES:', images);
 		return (
 			<div>
 				{images !== [] &&
+				<div>
+					<ul className="pagination pagination-sm">{this.createPaginator()}</ul>
+					{images.map((value, index) => {
+							return (
+								<div className='thumbnail'>
+									<img className='img-thumbnail' key={index} width='100px' src={value.thumb_url}/>
+								</div>
+							);
+						}
+					)}
 
-				images.map((value, index) => {
-						return <img key={index} width='100px' src={value.thumb_url} />
-					}
-				)
+				</div>
+
 				}
 
 			</div>
@@ -42,13 +56,42 @@ class ImageList extends Component {
 	}
 
 	loadImages() {
-		this.client.getImages(
+		const actualPage = this.state.actualPage;
+
+		this.client.getImages(actualPage,
 			(data) => {
-				this.setState({images: data.data});
-				console.log(data.data);
+				this.setState({
+					images: data.data.data,
+					countPages: parseInt(data.data.pages)
+				});
+				console.log(data.data.data, data.data.pages, actualPage);
 			},
 			(err) => console.log('Err: ', err)
 		);
+	}
+
+	handleChangePage(e, page) {
+		e.preventDefault();
+
+		this.setState({actualPage: page}, () => this.loadImages());
+	}
+
+	createPaginator() {
+		const actual = this.state.actualPage;
+		const count = this.state.countPages;
+
+		let paginator = [];
+
+		for (let i = 1; i <= count; i++) {
+			const cssClass = 'page-item' + (actual === i ? ' disabled' : '');
+			paginator.push(
+				<li className={cssClass} key={i}>
+					<a className="page-link" href="#" key={i} onClick={(e) => this.handleChangePage(e, i)}>{`${i}`}</a>
+				</li>
+			)
+		}
+
+		return paginator;
 	}
 }
 

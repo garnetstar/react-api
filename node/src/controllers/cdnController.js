@@ -17,12 +17,15 @@ exports.connect = function (req, res) {
 }
 
 exports.images = (req, res, next) => {
-	database.getImages((err, data) => {
+
+	console.log('REQ:', req.params, req.query);
+
+	database.getImages(req.query.limit, req.query.page, (err, data, totalCount) => {
 		if (err) {
 			next(err);
 		} else {
 			res.writeHead(200, {"Content-Type": "application/json"});
-			res.end(JSON.stringify(data));
+			res.end(JSON.stringify({pages: totalCount, data: data }));
 		}
 	});
 }

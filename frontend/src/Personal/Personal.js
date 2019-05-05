@@ -26,7 +26,6 @@ class Personal extends Component {
 					client={this.client}
 					successCallback={(id) => {
 						this.setState({refreshId: id});
-						console.log('SSSSSSSSSSSs', id);
 					}}
 				/>
 				<br/>
@@ -34,14 +33,6 @@ class Personal extends Component {
 			</div>
 		);
 	}
-
-	// loadImages() {
-	// 	this.setState({refreshId: })
-	// 	// this.client.getImages(
-	// 	// 	(data) => console.log(data),
-	// 	// 	(err) => console.log('Err: ', err)
-	// 	// );
-	// }
 }
 
 export default Personal;
