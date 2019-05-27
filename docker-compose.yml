@@ -60,6 +60,7 @@ services:
 # jako image se pouzije Dockerfile
   build:
    context: .
+   dockerfile: docker/Dockerfile
   container_name: react
   ports:
   - "81:80"
