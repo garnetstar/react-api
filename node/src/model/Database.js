@@ -10,12 +10,13 @@ exports.findUserByToken = function (token, callback) {
 	});
 };
 
-exports.addImage = (id, imageUrl, thumbUrl, mimetype, size, source, callback) => {
+exports.addImage = (id, image_id, imageUrl, imageType, mimetype, size, source, callback) => {
 
 	const args = {
 		id: id,
+		image_id: image_id,
 		url: imageUrl,
-		thumb_url: thumbUrl,
+		image_type: imageType,
 		mimetype: mimetype,
 		size: size,
 		source: source
@@ -43,7 +44,18 @@ exports.getImages = (limit = 10, page = 1, callback) => {
 
 		const offset = (pageParam - 1) * limitParam;
 
-		const query = 'SELECT SQL_CALC_FOUND_ROWS * FROM `image` ORDER BY `created` DESC LIMIT ? OFFSET ?';
+		// const query = 'SELECT SQL_CALC_FOUND_ROWS * FROM `image` ORDER BY `created` DESC LIMIT ? OFFSET ?';
+		// const query = 'SELECT SQL_CALC_FOUND_ROWS h.url AS image_url,t.url AS thumb_url FROM image JOIN image t ON h.id = t.id WHERE h.image_type=\'hires\' ORDER BY `created` DESC LIMIT ? OFFSET ?';
+		const query = 'SELECT \n' +
+			'SQL_CALC_FOUND_ROWS \n' +
+			'h.url AS image_url,\n' +
+			't.url AS thumb_url, \n' +
+			'h.size AS size \n' +
+			'FROM image h\n' +
+			'JOIN image t ON h.id = t.id and t.image_type = \'thumb\' \n' +
+			'WHERE h.image_type=\'hires\' \n' +
+			'ORDER BY h.created DESC LIMIT ? OFFSET ?';
+
 		conn.query(query, [limitParam, offset], (err, res, fields) => {
 
 			const data = res;

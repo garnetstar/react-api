@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Thumb from './Thumb';
 
 class ImageList extends Component {
 
@@ -31,22 +32,56 @@ class ImageList extends Component {
 		const images = this.state.images;
 		const countPages = parseInt(this.state.countPages);
 		const thumbStyle = {}
+		const cols = 3;
+		const realCount = images.length;
+		const rows = Math.ceil(realCount / cols);
 
+		const chunks = chunkArray(images, cols);
+		console.log('chunk', chunks);
+
+		let newPage = false;
 		console.log('IMAGES:', images);
 		return (
 			<div>
 				{images !== [] &&
 				<div>
 					<ul className="pagination pagination-sm">{this.createPaginator()}</ul>
-					{images.map((value, index) => {
-							return (
-								<div className='thumbnail'>
-									<img className='img-thumbnail' key={index} width='100px' src={value.thumb_url}/>
-								</div>
-							);
-						}
-					)}
+					<div>
+						{chunks.map((row, index) => {
+							// return(<div>row</div>);
+							// console.log('row::', row);
 
+							return (
+								<div className='row'>
+
+									{row.map(image => {
+										return (
+											<div className="col-sm-6 col-md-3">
+												<Thumb data={image}/>
+											</div>
+										)
+									})}
+
+								</div>
+							)
+						})
+						}
+
+						{/*{images.map((value, index) => {*/}
+						{/*		{*/}
+						{/*			newPage = (index) % cols === 0 && index !== 0;*/}
+						{/*		}*/}
+						{/*		return (*/}
+						{/*			<div className='col-sm-6 col-md-3'>*/}
+						{/*				/!*<Thumb/>*!/*/}
+						{/*				/!*<div className='thumbnail'>*!/*/}
+						{/*				/!*<img className='img-thumbnail' key={index} width='150px' src={value.thumb_url}/>*!/*/}
+						{/*				/!*</div>*!/*/}
+						{/*			</div>*/}
+						{/*		);*/}
+						{/*	}*/}
+						{/*)}*/}
+					</div>
 				</div>
 
 				}
@@ -93,6 +128,21 @@ class ImageList extends Component {
 
 		return paginator;
 	}
+}
+
+function chunkArray(myArray, chunk_size) {
+	var index = 0;
+	var arrayLength = myArray.length;
+	var tempArray = [];
+	var myChunk;
+
+	for (index = 0; index < arrayLength; index += chunk_size) {
+		myChunk = myArray.slice(index, index + chunk_size);
+		// Do something if you want with the group
+		tempArray.push(myChunk);
+	}
+
+	return tempArray;
 }
 
 export default ImageList;

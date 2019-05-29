@@ -3,6 +3,8 @@ const fs = require('fs');
 const auth = require('../model/CdnAuth');
 const database = require('../model/Database');
 const async = require('async');
+const sharp = require('sharp');
+const uuidv1 = require('uuid/v1');
 
 exports.add = function (req, res) {
 	console.log(process.env.MYSQL_ROOT_PASSWORD);
@@ -25,7 +27,7 @@ exports.images = (req, res, next) => {
 			next(err);
 		} else {
 			res.writeHead(200, {"Content-Type": "application/json"});
-			res.end(JSON.stringify({pages: totalCount, data: data }));
+			res.end(JSON.stringify({pages: totalCount, data: data}));
 		}
 	});
 }
@@ -37,17 +39,87 @@ exports.upload = function (req, res, next) {
 function upload(file, source, tags, res, next) {
 	console.log(file);
 
+	const thumb = {
+		'originalname': 'thumb.' + file.originalname,
+		'mimetype': file.mimetype,
+		'filename': file.filename + '.thumb',
+		'path': file.path + '.thumb',
+		'type': 'thumb'
+	};
+
+	console.log('thumb', thumb);
+
 	auth.useAuth((auth) => {
 
 		async.waterfall([
+
+			// create thumb from uploaded file
 			function (callback) {
-				uploadImageToDrive(callback, file, auth);
+
+				let thumbFile = file;
+				const thumbName = './tmp/' + thumb.filename;
+
+				sharp(file.path)
+					.resize(150, 150, {
+						fit: sharp.fit.inside,
+						withoutEnlargement: true
+					})
+					.toFormat('jpeg')
+					.toFile(thumbName, (err, info) => {
+						if (err) {
+							callback(err);
+						} else {
+							console.log('info::', info);
+							callback(null, file, thumb);
+						}
+					});
 			},
-			function (image, url, callback) {
-				addImageToDB(callback, image, url, source);
+
+			// parallel send image and thumb to google drive
+			function (file, thumb, callback) {
+
+				file.type = 'hires';
+
+				async.parallel({
+					thumb: function (callback) {
+						uploadImageToDrive(callback, thumb, auth);
+					},
+					hires: function (callback) {
+						uploadImageToDrive(callback, file, auth);
+					}
+				}, function (err, result) {
+					if (err) {
+						callback(err);
+					} else {
+						callback(null, result.thumb, result.hires);
+					}
+				});
+
 			},
-			function (image, url, callback) {
-				sendResponse(callback, res, image, url, source, tags);
+
+			// parallel add image and thumb to database
+			function (imageThumb, imageHires, callback) {
+
+				const id = uuidv1();
+				async.parallel({
+					hires: function (callback) {
+						addImageToDB(callback, id, imageHires, source);
+					},
+					thumb: function (callback) {
+						addImageToDB(callback, id, imageThumb, source);
+					}
+				}, function (err, result) {
+					if (err) {
+						callback(err)
+					} else {
+						callback(null, result);
+					}
+				});
+			},
+
+			// send response
+			function (images, callback) {
+				sendResponse(callback, res, images, source, tags);
 			}
 		], function (err, results) {
 			if (err) {
@@ -81,45 +153,53 @@ function uploadImageToDrive(callback, file, auth) {
 	drive.files.create({
 		resource: fileMetadata,
 		media: media,
-		fields: 'id, thumbnailLink, size, mimeType'
+		fields: 'id, size, mimeType'
 	}, function (err, image) {
 		// delete file from server
-		fs.unlinkSync(path);
+		// fs.unlinkSync(path);
 
 		if (err) {
 			callback(err);
 		} else {
 			// console.log('Image:', image.data);
 			const url = 'https://drive.google.com/uc?export=view&id=' + image.data.id;
-			callback(null, image, url);
+			image.type = file.type;
+			image.url = url;
+			callback(null, image);
 		}
 	});
 
 }
 
-function addImageToDB(callback, image, url, source) {
+function addImageToDB(callback, id, image, source) {
 
 	database.addImage(
+		id,
 		image.data.id,
-		url,
-		image.data.thumbnailLink,
+		image.url,
+		image.type,
 		image.data.mimeType,
 		parseInt(image.data.size),
 		source,
 		function (fields) {
-			callback(null, image, url);
+			callback(null, image);
 			// console.log('SUCCESS! file uploaded to drive and saved to db', fields);
 		}
 	);
 }
 
-function sendResponse(callback, res, image, url, source, tags) {
+function sendResponse(callback, res, images, source, tags) {
+
+	image = images.hires;
+	thumb = images.thumb;
+
 	res.writeHead(200, {"Content-Type": "application/json"});
 	res.end(JSON.stringify({
 		'status': 'uploaded',
 		'id': image.data.id,
-		'url': url,
-		'thumbnailLink': image.data.thumbnailLink,
+		'url': image.url,
+		'thumbnailLink': thumb.url,
+		'imageType': image.type,
 		'source': source,
 		'tags': tags,
 		'size': image.data.size,
