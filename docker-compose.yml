@@ -43,18 +43,16 @@ services:
   - db:db     
   environment:
   - ADMINER_DESIGN=nette
- proxy:
-# jako image se pouzije Dockerfile
+
+ nginx-proxy:
   build:
-   context: .
-   dockerfile: docker/Dockerfile-proxy
-  container_name: proxy
-#  extra_hosts:
-#  - "docker.localhost:172.17.0.1"
+    context: .
+    dockerfile: docker/Dockerfile-nginx-proxy
+  container_name: nginx-proxy
   ports:
-  - "80:80"
+    - "80:80"
   volumes:
-  - ./docker/proxy-default.conf:/etc/apache2/sites-available/000-default.conf
+    - ./docker/nginx-proxy-default.conf:/etc/nginx/conf.d/default.conf
 
  react:
 # jako image se pouzije Dockerfile

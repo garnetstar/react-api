@@ -1,9 +1,0 @@
-FROM limogin/php-7.1-apache
-
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-  php composer-setup.php --install-dir=/usr/bin --filename=composer && \
-  rm composer-setup.php 
-RUN  a2enmod proxy  
-RUN  a2enmod proxy_http
-
-RUN service apache2 restart
