@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown/with-html'
 
 class TextAreaMD extends Component {
 	constructor(props) {
@@ -51,7 +51,10 @@ class TextAreaMD extends Component {
 						ref={this.markDownScroll}
 						style={heightTextarea}
 					>
-						<ReactMarkdown source={this.state.content}/>
+						<ReactMarkdown
+							source={this.state.content}
+							escapeHtml={false}
+						/>
 					</div>
 				</div>
 			</div>

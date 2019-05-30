@@ -1,3 +1,4 @@
+ENV=prod
 DB_PASSWORD=idaho
 DB_NAME=slim
 GOOGLE_CLIENT_ID=192740429578-s8t31esln4b8ab64os5afg11imb93l35.apps.googleusercontent.com

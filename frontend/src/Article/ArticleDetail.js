@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import RouteNavItem from "../RouteNavItem";
 import AjaxHelperClass from "../ajaxHelper";
 import {Redirect} from 'react-router-dom';
-const ReactMarkdown = require('react-markdown')
+const ReactMarkdown = require('react-markdown/with-html')
 
 class ArticleDetail extends Component {
 	constructor(props) {
@@ -67,7 +67,11 @@ class ArticleDetail extends Component {
 
 					<h1>{this.state.article.title}</h1>
 					{this.state.article.content && (
-						<ReactMarkdown source={this.state.article.content} linkTarget="_blank" />
+						<ReactMarkdown
+							source={this.state.article.content}
+							linkTarget="_blank"
+							escapeHtml={false}
+						/>
 					)}
 				</div>
 			);
