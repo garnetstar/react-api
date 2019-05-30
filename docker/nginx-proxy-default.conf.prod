@@ -1,16 +1,14 @@
 server {
-   listen 80 default;
-   server_tokens off;
-   return 403 "Nothing here";
-   access_log off;
-   }
+    listen       80;
+    server_name .*;
+    server_tokens off;
+    return 403 "Nothing here";
+    access_log off;
+}
 
 server {
     listen       80;
-   server_name  localhost;
-   #server_tokens off;
-   #return 403 "Nothing here";
-   #access_log off;
+   server_name  garnetstar.hukot.net;
 
        location /api {
             proxy_pass         http://172.17.0.1:8081/;
@@ -41,7 +39,6 @@ server {
 
     #charset koi8-r;
     access_log  /var/log/nginx/idaho.access.log  main;
-    error_log /var/log/nginx/idaho.error.log;
 
     #   location / {
     #   root   /usr/share/nginx/html;
