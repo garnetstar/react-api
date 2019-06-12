@@ -10,7 +10,7 @@ exports.findUserByToken = function (token, callback) {
 	});
 };
 
-exports.addImage = (id, image_id, imageUrl, imageType, mimetype, size, source, callback) => {
+exports.addImage = (id, image_id, imageUrl, imageType, mimetype, size, source, width, height, callback) => {
 
 	const args = {
 		id: id,
@@ -19,7 +19,9 @@ exports.addImage = (id, image_id, imageUrl, imageType, mimetype, size, source, c
 		image_type: imageType,
 		mimetype: mimetype,
 		size: size,
-		source: source
+		source: source,
+		width: width,
+		height: height
 	};
 
 	// console.log('DBD:', args);

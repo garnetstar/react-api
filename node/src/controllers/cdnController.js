@@ -72,12 +72,14 @@ function upload(file, source, tags, res, next) {
 							console.log('info::', info);
 							callback(null, file, thumb);
 						}
-					});
+					}).metadata();
+
 			},
 
 			// parallel send image and thumb to google drive
 			function (file, thumb, callback) {
 
+			console.log('TTTT', thumb);
 				file.type = 'hires';
 
 				async.parallel({
@@ -153,13 +155,13 @@ function uploadImageToDrive(callback, file, auth) {
 	drive.files.create({
 		resource: fileMetadata,
 		media: media,
-		fields: 'id, size, mimeType'
+		fields: 'id, size, mimeType, imageMediaMetadata'
 	}, function (err, image) {
 		// delete file from server
 		// fs.unlinkSync(path);
 
 		if (err) {
-			callback(err);
+			throw err;
 		} else {
 			// console.log('Image:', image.data);
 			const url = 'https://drive.google.com/uc?export=view&id=' + image.data.id;
@@ -181,10 +183,12 @@ function addImageToDB(callback, id, image, source) {
 		image.data.mimeType,
 		parseInt(image.data.size),
 		source,
+		parseInt(image.data.imageMediaMetadata.width),
+		parseInt(image.data.imageMediaMetadata.height),
 		function (fields) {
 			callback(null, image);
 			// console.log('SUCCESS! file uploaded to drive and saved to db', fields);
-		}
+		},
 	);
 }
 
