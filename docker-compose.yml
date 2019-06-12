@@ -52,7 +52,8 @@ services:
   ports:
     - "80:80"
   volumes:
-    - ./docker/nginx-proxy-default.conf.${ENV}:/etc/nginx/conf.d/default.conf
+    - ./docker/nginx-proxy/default.conf.${ENV}:/etc/nginx/conf.d/default.conf
+    - ./docker/nginx-proxy/nginx.conf:/etc/nginx/nginx.conf
 
  react:
   build:
