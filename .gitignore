@@ -11,3 +11,6 @@ node_modules/*
 backup/*
 node/src/tmp/*
 node/src/token.json
+react/build/*
+cdn-images/*
+frontend/build/*
