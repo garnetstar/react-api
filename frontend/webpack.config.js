@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require('webpack'); // remember to require this, because we DefinePlugin is a webpack plugin
 const dotenv = require('dotenv');
 const fs = require('fs'); // to check if the file exists
-
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 
 module.exports = (env) => {
@@ -38,7 +38,18 @@ module.exports = (env) => {
 				},
 				{
 					test: /\.css$/,
-					use: ["style-loader", "css-loader"]
+					use: [
+						{
+							loader: MiniCssExtractPlugin.loader,
+							options: {
+								// you can specify a publicPath here
+								// by default it uses publicPath in webpackOptions.output
+								publicPath: '../',
+								hmr: !is_production,
+							},
+						},
+						'css-loader',
+					],
 				},
 				{
 					test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
@@ -52,7 +63,14 @@ module.exports = (env) => {
 		},
 		plugins: [
 			new HtmlWebpackPlugin({template: "./src/index.html",filename: "./index.html"}),
-			new webpack.DefinePlugin(envKeys)
+			new webpack.DefinePlugin(envKeys),
+			new MiniCssExtractPlugin({
+				// Options similar to the same options in webpackOptions.output
+				// all options are optional
+				filename: !is_production ? '[name].css' : '[name].[hash].css',
+				chunkFilename: !is_production ? '[id].css' : '[id].[hash].css',
+				ignoreOrder: false, // Enable to remove warnings about conflicting order
+			}),
 		]
 	};
 };
