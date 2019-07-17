@@ -63,7 +63,7 @@ services:
   ports:
   - "81:80"
   volumes:
-  - ./react/build:/var/www/html/public
+  - ./frontend/build:/var/www/html/public
   - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
 
  node:

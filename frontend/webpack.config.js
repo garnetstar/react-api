@@ -24,7 +24,7 @@ module.exports = (env) => {
 		entry: "./src/index.js",
 		output: {
 			path: path.join(__dirname, "/build"),
-			filename: is_production ? '[name].[hash].js' : '[name].js',
+			filename: is_production ? '[name].[contenthash].js' : '[name].js',
 			publicPath: '/'
 		},
 		module: {
@@ -57,20 +57,39 @@ module.exports = (env) => {
 				},
 				{
 					test: /\.html$/,
-					use: [{ loader: "html-loader", options: { minimize: false} }]
+					use: [{loader: "html-loader", options: {minimize: false}}]
 				}
 			]
 		},
 		plugins: [
-			new HtmlWebpackPlugin({template: "./src/index.html",filename: "./index.html"}),
+			new HtmlWebpackPlugin(
+				{
+					template: "./src/index.html",
+					filename: "./index.html",
+					title: 'Caching XXXXXXXXXXXXXX'
+				}
+			),
 			new webpack.DefinePlugin(envKeys),
 			new MiniCssExtractPlugin({
 				// Options similar to the same options in webpackOptions.output
 				// all options are optional
-				filename: !is_production ? '[name].css' : '[name].[hash].css',
-				chunkFilename: !is_production ? '[id].css' : '[id].[hash].css',
+				filename: !is_production ? '[name].css' : '[name].[contenthash].css',
+				chunkFilename: !is_production ? '[id].css' : '[id].[contenthash].css',
 				ignoreOrder: false, // Enable to remove warnings about conflicting order
 			}),
-		]
+		],
+		optimization: {
+			moduleIds: 'hashed',
+			runtimeChunk: 'single',
+			splitChunks: {
+				cacheGroups: {
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendors',
+						chunks: 'all'
+					}
+				}
+			}
+		}
 	};
 };
