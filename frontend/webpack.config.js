@@ -4,6 +4,7 @@ const webpack = require('webpack'); // remember to require this, because we Defi
 const dotenv = require('dotenv');
 const fs = require('fs'); // to check if the file exists
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 
 module.exports = (env) => {
@@ -89,7 +90,8 @@ module.exports = (env) => {
 						chunks: 'all'
 					}
 				}
-			}
+			},
+			minimizer: [new OptimizeCSSAssetsPlugin({})]
 		}
 	};
 };
