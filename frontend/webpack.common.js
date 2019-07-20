@@ -5,6 +5,7 @@ const webpack = require('webpack'); // remember to require this, because we Defi
 const fs = require('fs'); // to check if the file exists
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // const is_production = true;
 // const currentPath = path.join(__dirname);
@@ -68,6 +69,9 @@ module.exports = {
 				title: 'Caching XXXXXXXXXXXXXX'
 			}
 		),
+		new CleanWebpackPlugin({
+			cleanOnceBeforeBuildPatterns: ['**/*', '!\.htaccess', '!favicon.ico', '!manifest.json'],
+		})
 	],
 	optimization:
 		{
