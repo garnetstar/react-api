@@ -4,20 +4,8 @@ const webpack = require('webpack'); // remember to require this, because we Defi
 // const dotenv = require('dotenv');
 const fs = require('fs'); // to check if the file exists
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
-// const is_production = true;
-// const currentPath = path.join(__dirname);
-// const basePath = currentPath + '/.env';
-// const envPath = basePath + '.' + env.ENVIRONMENT;
-// const finalPath = fs.existsSync(envPath) ? envPath : basePath;
-// const fileEnv = dotenv.config({path: finalPath}).parsed;
-//
-// const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
-// 	prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
-// 	return prev;
-// }, {});
+// const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 module.exports = {
 	entry: "./src/index.js",
@@ -54,10 +42,21 @@ module.exports = {
 				test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
 				loader: 'url-loader?limit=100000'
 			},
-			// {
-			// 	test: /\.html$/,
-			// 	use: [{loader: "html-loader", options: {minimize: false}}]
-			// }
+			{
+				test: /\.sass$/,
+				use: [
+					// fallback to style-loader in development
+					{
+						loader: MiniCssExtractPlugin.loader
+					},
+					{
+						loader: "css-loader"
+					},
+					{
+						loader: "sass-loader"
+					}
+				]
+			}
 		]
 	}
 	,
@@ -89,9 +88,6 @@ module.exports = {
 								'all'
 						}
 					}
-				}
-			,
-			minimizer: [new OptimizeCSSAssetsPlugin({})]
+				},
 		}
 }
-;
