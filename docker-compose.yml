@@ -1,16 +1,16 @@
 version: "3"
 services:
- data_mysql:
-  image: busybox
-  volumes:
-  - ./docker/mysql:/var/lib/mysql
-  - ./backup:/backup
+# data_mysql:
+#  image: busybox
+#  volumes:
+#  - ./docker/mysql:/var/lib/mysql
+#  - ./backup:/backup
 
  slim:
   build:
    context: .
    dockerfile: docker/Dockerfile
-  container_name: slim-web
+  container_name: api-slim
   ports:
   - "8081:80"
   volumes:
@@ -22,7 +22,7 @@ services:
   - .env
  db:
   image: mysql:5.7
-  container_name: slim-db
+  container_name: db
   expose:
   - "3306"
   ports:
@@ -36,7 +36,7 @@ services:
 #  - MYSQL_USER=${DB_USER}
  adminer:
   image: adminer
-  container_name: slim-adminer
+  container_name: adminer
   ports:
   - "8080:8080"
   links:
@@ -59,7 +59,7 @@ services:
   build:
    context: .
    dockerfile: docker/Dockerfile
-  container_name: react
+  container_name: web
   ports:
   - "81:80"
   volumes:
@@ -67,6 +67,7 @@ services:
   - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
 
  node:
+  container_name: node
   build:
     context: .
     dockerfile: node/Dockerfile
@@ -86,6 +87,7 @@ services:
   - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID}
 
  node-frontend:
+  container_name: node-frontend
   build:
     context: .
     dockerfile: docker/Dockerfile-node-frontend
