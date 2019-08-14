@@ -6,4 +6,9 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+git clone git@bitbucket.org:garnetstar/pg-api.git src/api
+make -C ./src/api/ composer-install
+
+mkdir ./src/api/src/temp
+
 docker-compose run --rm --entrypoint="bash -c" node "npm install"
