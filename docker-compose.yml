@@ -6,16 +6,16 @@ services:
 #  - ./docker/mysql:/var/lib/mysql
 #  - ./backup:/backup
 
- slim:
+ api:
   build:
    context: .
-   dockerfile: docker/Dockerfile
-  container_name: api-slim
+   dockerfile: src/api/Docker/Dockerfile
+  container_name: pg-api
   ports:
   - "8081:80"
   volumes:
-  - ./:/var/www/html/
-  - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
+  - ./src/api/src/:/api
+  - ./src/api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
   links:
   - db:db
   env_file:

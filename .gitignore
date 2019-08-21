@@ -17,3 +17,5 @@ frontend/build/*
 !frontend/build/.htaccess
 !frontend/build/favicon.ico
 !frontend/build/manifest.json
+src/*
+
