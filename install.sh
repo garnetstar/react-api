@@ -16,4 +16,4 @@ mkdir ./src/api/src/temp
 
 docker-compose run --rm --entrypoint="bash -c" node "npm install"
 
- docker-compose exec db mysql -u root -pidaho -e "CREATE DATABASE IF NOT EXISTS pg CHARACTER SET utf8 COLLATE utf8_unicode_ci"
+docker-compose exec db mysql -u root -pidaho -e "CREATE DATABASE IF NOT EXISTS pg CHARACTER SET utf8 COLLATE utf8_unicode_ci"
