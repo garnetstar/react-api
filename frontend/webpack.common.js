@@ -1,11 +1,19 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require('webpack'); // remember to require this, because we DefinePlugin is a webpack plugin
-// const dotenv = require('dotenv');
+const dotenv = require('dotenv');
 const fs = require('fs'); // to check if the file exists
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+
+const env = dotenv.config().parsed;
+
+// reduce it to a nice object, the same as before
+const envKeys = Object.keys(env).reduce((prev, next) => {
+	prev[`process.env.${next}`] = JSON.stringify(env[next]);
+	return prev;
+}, {});
 
 module.exports = {
 	entry: "./src/index.js",
@@ -70,7 +78,8 @@ module.exports = {
 		),
 		new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: ['**/*', '!\.htaccess', '!favicon.ico', '!manifest.json'],
-		})
+		}),
+		new webpack.DefinePlugin(envKeys)
 	],
 	optimization:
 		{
