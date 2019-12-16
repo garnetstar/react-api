@@ -7,15 +7,16 @@ services:
 #  - ./backup:/backup
 
  api:
-  build:
-   context: .
-   dockerfile: src/api/Docker/Dockerfile
+  image: garnetstar/pg-api:429c8d5ece719b7cf8f9b87b394750dc51e3a93c
+#  build:
+#   context: .
+#   dockerfile: src/api/Docker/Dockerfile
   container_name: pg-api
   ports:
   - "8081:80"
-  volumes:
-  - ./src/api/src/:/api
-  - ./src/api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
+#  volumes:
+#  - ./src/api/src/:/api
+#  - ./src/api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
   links:
   - db:db
   env_file:
@@ -54,17 +55,18 @@ services:
   volumes:
     - ./docker/nginx-proxy/default.conf.${ENV}:/etc/nginx/conf.d/default.conf
     - ./docker/nginx-proxy/nginx.conf:/etc/nginx/nginx.conf
+    - ./frontend/build:/frontend
 
- react:
-  build:
-   context: .
-   dockerfile: docker/Dockerfile
-  container_name: web
-  ports:
-  - "81:80"
-  volumes:
-  - ./frontend/build:/var/www/html/public
-  - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
+# react:
+#  build:
+#   context: .
+#   dockerfile: docker/Dockerfile
+#  container_name: web
+#  ports:
+#  - "81:80"
+#  volumes:
+#  - ./frontend/build:/var/www/html/public
+#  - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
 
  node:
   container_name: node
