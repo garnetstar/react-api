@@ -8,16 +8,16 @@ services:
 
  pg-api:
   container_name: pg-api
-  image: "garnetstar/pg-api:${PG_API_TAG}"
-#  build:
-#   context: .
-#   dockerfile: src/pg-api/Docker/Dockerfile
+#  image: "garnetstar/pg-api:${PG_API_TAG}"
+  build:
+   context: .
+   dockerfile: src/pg-api/Docker/Dockerfile-dev
   ports:
   - "8081:80"
-#  volumes:
-#  - ./src/pg-api/src/:/api
-#  - ./src/pg-api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
-#  - ./src/pg-api/Docker/php.ini:/usr/local/etc/php/php.ini
+  volumes:
+  - ./src/pg-api/src/:/api
+  - ./src/pg-api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
+  - ./src/pg-api/Docker/php.ini:/usr/local/etc/php/php.ini
   links:
   - db:db
   env_file:
