@@ -87,7 +87,7 @@ class Article extends Component {
 	}
 
 	handleSaveArticle(e) {
-		let params = {title: this.state.newArticleTitle};
+		let params = {title: this.state.newArticleTitle, content:''};
 		let url = '/api/article';
 
 		this.client.put(
