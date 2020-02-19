@@ -14,7 +14,10 @@ class Login extends Component {
 	}
 
 	login(googleResponse) {
-		const id_token = googleResponse.Zi.id_token;
+
+		const id_token = googleResponse.tokenObj.id_token;
+
+
 		this.setState({imageUrl: googleResponse.profileObj.imageUrl})
 		axios.post('/api/login', {'id_token': id_token}, {headers: {'Content-Type': 'text/plain'}})
 			.then((response) => {
