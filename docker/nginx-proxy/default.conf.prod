@@ -7,6 +7,16 @@ server {
 }
 
 server {
+    listen 80;
+    listen [::]:80;
+	server_name garnetstar.hukot.net;
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
        server_name  garnetstar.hukot.net;
 
        listen 443 ssl;
