@@ -3,6 +3,7 @@ const common = require('./webpack.common.js');
 const path = require("path");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = merge(common, {
 	mode: 'production',
@@ -27,6 +28,7 @@ module.exports = merge(common, {
 			chunkFilename: '[id].[contenthash].css',
 			ignoreOrder: false, // Enable to remove warnings about conflicting order
 		}),
+		new MinifyPlugin()
 	],
 	optimization:
 		{
