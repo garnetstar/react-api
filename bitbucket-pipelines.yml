@@ -1,22 +1,18 @@
-# This is a sample build configuration for Docker.
-# Check our guides at https://confluence.atlassian.com/x/O1toN for more examples.
-# Only use spaces to indent your .yml configuration.
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-image: atlassian/default-image:2
+image: node:10.15.3
 
 pipelines:
   default:
     - step:
-        services:
-          - docker
-        script: # Modify the commands below to build your repository.
-          # Set $DOCKER_HUB_USERNAME and $DOCKER_HUB_PASSWORD as environment variables in repository settings
-          - export IMAGE_NAME=your-Dockerhub-account/your-docker-image-name:$BITBUCKET_COMMIT
+        name: Build frontend
+        script:
+          - cd frontend
+          - mv .env.production .env
+          - npm install
+          - npm run build
+          - mkdir -p ~/.ssh
+          - cat ../production_known_hosts >> ~/.ssh/known_hosts
+          - (umask  077 ; echo $SSH_KEY | base64 -di > ~/.ssh/id_rsa)
+          - ssh -i ~/.ssh/id_rsa root@46.36.36.187 'cd /app/react-api/frontend/build && rm `ls -A | grep -v favicon.ico | grep -v .htaccess | grep -v manifest.json`'
+          - scp -i ~/.ssh/id_rsa ./build/* root@46.36.36.187:/app/react-api/frontend/build/
 
-          # build the Docker image (this will use the Dockerfile in the root of the repo)
-          - docker build -t $IMAGE_NAME .
-          # authenticate with the Docker Hub registry
-          - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
-          # push the new Docker image to the Docker registry
-          - docker push $IMAGE_NAME
+
