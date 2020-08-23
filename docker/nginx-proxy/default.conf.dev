@@ -8,7 +8,6 @@ server {
 
 server {
     listen 80;
-    listen [::]:80;
 	server_name localhost;
 
     location / {
@@ -26,9 +25,9 @@ map $sent_http_content_type $expires {
 }
 
 server {
-   server_name localhost;
-   
    listen 443 ssl;
+   server_name localhost;
+
    ssl_certificate /etc/nginx/conf.d/cert.crt;
    ssl_certificate_key /etc/nginx/conf.d/cert.key;
 
@@ -43,8 +42,8 @@ server {
             proxy_set_header   X-Forwarded-Host $server_name;
         }
 
-       location /cdn {
-            proxy_pass         http://172.17.0.1:3001/cdn/;
+       location  ~ ^/cdn/(.*)$ {
+            proxy_pass         http://172.17.0.1:3001/$1;
             proxy_redirect     off;
             proxy_set_header   Host $host;
             proxy_set_header   X-Real-IP $remote_addr;
