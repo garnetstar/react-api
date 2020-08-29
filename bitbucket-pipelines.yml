@@ -1,5 +1,7 @@
 image: node:10.15.3
 
+definitions:
+
 pipelines:
   default:
     - step:
@@ -9,10 +11,31 @@ pipelines:
           - mv .env.production .env
           - npm install
           - npm run build
-          - mkdir -p ~/.ssh
-          - cat ../production_known_hosts >> ~/.ssh/known_hosts
-          - (umask  077 ; echo $SSH_KEY | base64 -di > ~/.ssh/id_rsa)
-          - ssh -i ~/.ssh/id_rsa root@46.36.36.187 'cd /app/react-api/frontend/build && rm `ls -A | grep -v favicon.ico | grep -v .htaccess | grep -v manifest.json`'
-          - scp -i ~/.ssh/id_rsa ./build/* root@46.36.36.187:/app/react-api/frontend/build/
+        artifacts:
+          - frontend/build/*
 
+    - step:
+          services:
+            - docker
+          name: Push to registry
+          script:
+          - export IMAGE_NAME=garnetstar/pg-frontend:$BITBUCKET_COMMIT
+          - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          - docker build --no-cache -f ./frontend/Dockerfile -t $IMAGE_NAME .
+          - docker images
+          - docker push $IMAGE_NAME
+          - echo "IMAGE_NAME=\"$IMAGE_NAME\"" > variables
+          artifacts:
+            - variables
 
+    - step:
+          name: Pull image
+          clone:
+            enabled: false
+          script:
+            - source variables
+            - echo $IMAGE_NAME
+            - mkdir -p ~/.ssh
+            - echo $PRODUCTION_KNOWN_HOSTS >> ~/.ssh/known_hosts
+            - (umask  077 ; echo $SSH_KEY | base64 -di > ~/.ssh/id_rsa)
+            - ssh -i ~/.ssh/id_rsa root@46.36.36.187 "docker pull $IMAGE_NAME"
