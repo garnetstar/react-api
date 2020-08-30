@@ -1,10 +1,5 @@
 version: "3.4"
 services:
-# data_mysql:
-#  image: busybox
-#  volumes:
-#  - ./docker/mysql:/var/lib/mysql
-#  - ./backup:/backup
 
  pg-api:
   container_name: pg-api
@@ -91,14 +86,14 @@ services:
   - MYSQL_PASSWORD=${DB_PASSWORD}
   - MYSQL_DATABASE=${DB_NAME}
   - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID}
-
- node-frontend:
-  container_name: node-frontend
-  build:
-    context: .
-    dockerfile: docker/Dockerfile-node-frontend
-  volumes:
-    - ./frontend:/node
+#
+# node-frontend:
+#  container_name: node-frontend
+#  build:
+#    context: .
+#    dockerfile: docker/Dockerfile-node-frontend
+#  volumes:
+#    - ./frontend:/node
 
 
 volumes:
