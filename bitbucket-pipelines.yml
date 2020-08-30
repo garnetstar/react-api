@@ -30,12 +30,10 @@ pipelines:
 
     - step:
           name: Pull image
-          clone:
-            enabled: false
           script:
             - source variables
             - echo $IMAGE_NAME
             - mkdir -p ~/.ssh
             - echo $PRODUCTION_KNOWN_HOSTS >> ~/.ssh/known_hosts
             - (umask  077 ; echo $SSH_KEY | base64 -di > ~/.ssh/id_rsa)
-            - ssh -i ~/.ssh/id_rsa root@46.36.36.187 "docker pull $IMAGE_NAME"
+            - ssh -i ~/.ssh/id_rsa root@46.36.36.187 "cd /app/react-api && ./deploy_frontend.sh $IMAGE_NAME"
