@@ -1,0 +1,107 @@
+version: "3.4"
+services:
+
+ pg-api:
+  container_name: pg-api
+  #image: "garnetstar/pg-api:${PG_API_TAG}"
+  ports:
+  - "8081:80"
+  links:
+  - db:db
+  env_file:
+  - .env
+  build:
+    context: .
+    dockerfile: src/pg-api/Docker/Dockerfile-dev
+  volumes:
+  - ./src/pg-api/src/:/api
+  - ./src/pg-api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
+  - ./src/pg-api/Docker/php.ini:/usr/local/etc/php/php.ini
+
+ pg-frontend:
+  container_name: pg-frontend
+  image: "${FRONTEND_IMAGE}"
+  volumes:
+    - frontend:/frontend
+
+ db:
+  image: mysql:5.7
+  container_name: db
+  expose:
+  - "3306"
+  ports:
+  - "33062:3306"
+  volumes:
+  - ./docker/mysql:/var/lib/mysql
+  - ./backup:/backup
+  environment:
+  - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+  - MYSQL_DATABASE=${DB_NAME}
+#  - MYSQL_USER=${DB_USER}
+ adminer:
+  image: adminer
+  container_name: adminer
+  ports:
+  - "8080:8080"
+  links:
+  - db:db     
+  environment:
+  - ADMINER_DESIGN=nette  server_name  _;
+
+ nginx-proxy:
+  build:
+    context: .
+    dockerfile: docker/Dockerfile-nginx-proxy
+  container_name: nginx-proxy
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ./docker/nginx-proxy/default.conf.${ENV}:/etc/nginx/conf.d/default.conf
+    - ./docker/nginx-proxy/nginx.conf:/etc/nginx/nginx.conf
+#    - ./frontend/build:/frontend
+    - ./config/nginx-proxy/dev.garnetstar.hukot.net.crt:/etc/nginx/conf.d/cert.crt
+    - ./config/nginx-proxy/dev.garnetstar.hukot.net.key:/etc/nginx/conf.d/cert.key
+    - frontend:/frontend
+# react:
+#  build:
+#   context: .
+#   dockerfile: docker/Dockerfile
+#  container_name: web
+#  ports:
+#  - "81:80"
+#  volumes:
+#  - ./frontend/build:/var/www/html/public
+#  - ./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
+
+ node:
+  container_name: node
+  build:
+    context: .
+    dockerfile: node/Dockerfile
+  volumes:
+  - ./node/src:/node
+  working_dir: /node
+  ports:
+  - "3001:3000"
+  - "9229:9229"
+  command:
+    - nodemon
+    - "--inspect=0.0.0.0"
+    - "./app.js"
+  environment:
+  - MYSQL_PASSWORD=${DB_PASSWORD}
+  - MYSQL_DATABASE=${DB_NAME}
+  - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID}
+#
+# node-frontend:
+#  container_name: node-frontend
+#  build:
+#    context: .
+#    dockerfile: docker/Dockerfile-node-frontend
+#  volumes:
+#    - ./frontend:/node
+
+
+volumes:
+  frontend:
