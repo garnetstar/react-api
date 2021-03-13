@@ -18,11 +18,12 @@ services:
   - ./src/pg-api/Docker/default.conf:/etc/apache2/sites-available/000-default.conf
   - ./src/pg-api/Docker/php.ini:/usr/local/etc/php/php.ini
 
- pg-frontend:
-  container_name: pg-frontend
-  image: "${FRONTEND_IMAGE}"
-  volumes:
-    - frontend:/frontend
+
+# pg-frontend:
+#  container_name: pg-frontend
+#  image: "${FRONTEND_IMAGE}"
+#  volumes:
+#    - frontend:/frontend
 
  db:
   image: mysql:5.7
@@ -62,7 +63,7 @@ services:
 #    - ./frontend/build:/frontend
     - ./config/nginx-proxy/dev.garnetstar.hukot.net.crt:/etc/nginx/conf.d/cert.crt
     - ./config/nginx-proxy/dev.garnetstar.hukot.net.key:/etc/nginx/conf.d/cert.key
-    - frontend:/frontend
+    - ./src/pg-frontend/build:/frontend
 # react:
 #  build:
 #   context: .
