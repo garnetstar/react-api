@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser')
 
-var http = require('http');
+// var http = require('http');
 var cdnRouter = require('./routes/cdnRouter');
 var app = express();
 var port = 3000;
